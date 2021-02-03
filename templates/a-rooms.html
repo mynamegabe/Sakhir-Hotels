@@ -1,0 +1,110 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Rooms</h1>
+<div>
+  <h1 class="display-5">Studio Rooms</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Room ID</th>
+        <th>Room Name</th>
+        <th>Rooms</th>
+        <th>Available Rooms</th>
+        <th>Price</th>
+        <th>Capacity</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for room in studio_list %}
+      <tr>
+        <td>{{ room.get_room_id() }}</td>
+        <td>{{ room.get_room_name() }}</td>
+        <td>{{ room.get_rooms() }}</td>
+        <td>{{ room.get_avail_rooms() }}</td>
+        <td>{{ room.get_price() }}</td>
+        <td>{{ room.get_capacity_list() }}</td>
+        <td>{{ room.get_detail_list() }}</td>
+        <td><a href="/a-updateRoom/{{room.get_room_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_room', id=room.get_room_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{room.get_room_name()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h1 class="display-5">Regular Rooms</h1>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Room ID</th>
+        <th>Room Name</th>
+        <th>Rooms</th>
+        <th>Available Rooms</th>
+        <th>Price</th>
+        <th>Capacity</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for room in regular_list %}
+      <tr>
+        <td>{{ room.get_room_id() }}</td>
+        <td>{{ room.get_room_name() }}</td>
+        <td>{{ room.get_rooms() }}</td>
+        <td>{{ room.get_avail_rooms() }}</td>
+        <td>{{ room.get_price() }}</td>
+        <td>{{ room.get_capacity_list() }}</td>
+        <td>{{ room.get_detail_list() }}</td>
+        <td><a href="/a-updateRoom/{{room.get_room_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_room', id=room.get_room_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{room.get_room_name()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h1 class="display-5">Suites</h1>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Room ID</th>
+        <th>Room Name</th>
+        <th>Rooms</th>
+        <th>Available Rooms</th>
+        <th>Price</th>
+        <th>Capacity</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for room in suite_list %}
+      <tr>
+        <td>{{ room.get_room_id() }}</td>
+        <td>{{ room.get_room_name() }}</td>
+        <td>{{ room.get_rooms() }}</td>
+        <td>{{ room.get_avail_rooms() }}</td>
+        <td>{{ room.get_price() }}</td>
+        <td>{{ room.get_capacity_list() }}</td>
+        <td>{{ room.get_detail_list() }}</td>
+        <td><a href="/a-updateRoom/{{room.get_room_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_room', id=room.get_room_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{room.get_room_name()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "admin.html" %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<script>
+$(document).ready(function(){
+  try {
+    document.getElementById("inputtext").value="";
+    var element = document.getElementById("chatbox");
+    element.scrollTop = element.scrollHeight;
+  } catch(err) {
+    /*none*/
+  }
+})
+</script>
+<h1>Live Support</h1>
+<div id="userinfo">
+  <ul>
+    <li>Name: {{ info.get_name() }}</li>
+    <li>Email: {{ info.get_email() }}</li>
+    <li>Phone Number: {{ info.get_phone() }}</li>
+    <li>Query: {{ info.get_query() }}</li>
+  </ul>
+</div>
+<script>
+setTimeout(function(){
+  if (document.getElementById("inputtext").value == "") {
+    document.getElementById("inputtext").value = "reload";
+    document.getElementById("sendtext").submit();
+    console.log("lol")
+  }
+},3000)
+</script>
+<div id="chatcontainer">
+  <img src="/Images/Icons/livechat.png" id="livechaticon"/>
+  <h1>Live support</h1>
+  <div id="chatbox">
+    {% for msg in chat %}
+    {% if msg[0:4] == "cust" %}
+      <div class="chatline">
+        <h4>{{ msg[5:]}}</h4>
+      </div>
+    {% elif msg[0:4] == "admn" %}
+      <div class="chatline">
+        <h3>{{ msg[5:]}}</h3>
+      </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% from "includes/_formHelper.html" import render_field %}
+  <form method="POST" action="" id="sendtext">
+    {{ render_field(form.inputtext, class="form-control") }}
+    <input type="submit" value="Send" id="chatsubmit"/>
+  </form>
+</div>
+
+{% endblock %}

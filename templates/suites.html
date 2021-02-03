@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=SGD" data-sdk-integration-source="button-factory"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script type="text/javascript" src="../js/script.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <title>Sakhir Hotels</title>
+  <link rel="icon" href="/Images/logotransparent.png">
+  <meta http-equiv='cache-control' content='no-cache'>
+  <meta http-equiv='expires' content='0'>
+  <meta http-equiv='pragma' content='no-cache'>
+</head>
+<body>
+  <img src="/Images/suite.jpg" id="background"/>
+  <img src="/Images/suitesmini.jpg" id="background1"/>
+  <img src="/Images/suitespresidential.jpg" id="background2"/>
+  <!--- - - - - - - - - - - -Full Navbar-------------------------->
+  <div id="prodnavbar">
+    {% block navbar %}
+    {% include 'includes/_mainnav.html' %}
+    {% endblock %}
+  </div>
+
+
+
+  <div id="resnavbar">
+    {% block resnavbar %}
+    {% include 'includes/_ressnav.html' %}
+    {% endblock %}
+  </div>
+  <!--- - - - - - - - - - - -Full Navbar-------------------------->
+
+  {% block rooms %}
+  {% for room in rooms %}
+    <div id="mini" class="body">
+      {% if room.get_room_id() % 2 == 0 %}
+      <div class="roominfo rright instantdelay">
+        <div class="centerdiv">
+          <h3 id="roomname">{{ room.get_room_name() }}</h3>
+          <ul>
+            {% for item in room.get_detail_list() %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+          <br><br>
+          <fieldset style="text-align:left;" class="fullfields">
+            <legend>Start Date</legend>
+            <input type="date" id="startdate" class="fieldsetfields"/>
+          </fieldset>
+          <fieldset style="text-align:left;" class="fullfields">
+            <legend>End Date</legend>
+            <input type="date" id="enddate" class="fieldsetfields"/>
+          </fieldset>
+          <br><br>
+          <div id="smart-button-container-{{ room.get_room_id() }}">
+            <div style="text-align: center;">
+              <div style="margin-bottom: 1.25rem;">
+                <select id="item-options"><option value="1-Day" price="70">1-Day - 70 SGD</option><option value="2-Day" price="135">2-Day - 135 SGD</option><option value="3-Day" price="200">3-Day - 200 SGD</option></select>
+                <select style="visibility: hidden" id="quantitySelect"></select>
+              </div>
+            <div id="paypal-button-container-{{ room.get_room_id() }}"></div>
+            </div>
+          </div>
+          <script>
+            function initPayPalButton() {
+              var shipping = 70;
+              var itemOptions = document.querySelector("#smart-button-container-{{ room.get_room_id() }} #item-options");
+          var quantity = parseInt();
+          var quantitySelect = document.querySelector("#smart-button-container-{{ room.get_room_id() }} #quantitySelect");
+          if (!isNaN(quantity)) {
+            quantitySelect.style.visibility = "visible";
+          }
+          var orderDescription = 'Studio Mini';
+          if(orderDescription === '') {
+            orderDescription = 'Item';
+          }
+          paypal.Buttons({
+            style: {
+              shape: 'pill',
+              color: 'blue',
+              layout: 'vertical',
+              label: 'paypal',
+
+            },
+            createOrder: function(data, actions) {
+              var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
+              var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
+              var tax = (0 === 0) ? 0 : (selectedItemPrice * (parseFloat(0)/100));
+              if(quantitySelect.options.length > 0) {
+                quantity = parseInt(quantitySelect.options[quantitySelect.selectedIndex].value);
+              } else {
+                quantity = 1;
+              }
+
+              tax *= quantity;
+              tax = Math.round(tax * 100) / 100;
+              var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
+              priceTotal = Math.round(priceTotal * 100) / 100;
+              var itemTotalValue = Math.round((selectedItemPrice * quantity) * 100) / 100;
+
+              return actions.order.create({
+                purchase_units: [{
+                  description: orderDescription,
+                  amount: {
+                    currency_code: 'SGD',
+                    value: priceTotal,
+                    breakdown: {
+                      item_total: {
+                        currency_code: 'SGD',
+                        value: itemTotalValue,
+                      },
+                      shipping: {
+                        currency_code: 'SGD',
+                        value: shipping,
+                      },
+                      tax_total: {
+                        currency_code: 'SGD',
+                        value: tax,
+                      }
+                    }
+                  },
+                  items: [{
+                    name: selectedItemDescription,
+                    unit_amount: {
+                      currency_code: 'SGD',
+                      value: selectedItemPrice,
+                    },
+                    quantity: quantity
+                  }]
+                }]
+              });
+            },
+            onApprove: function(data, actions) {
+              return actions.order.capture().then(function(details) {
+                alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/approve", true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({
+                    jdata: data,
+                    jactions: actions
+                }));
+              });
+            },
+            onError: function(err) {
+              console.log(err);
+            },
+          }).render('#paypal-button-container-{{ room.get_room_id() }}');
+        }
+        initPayPalButton();
+          </script>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="roominfo rleft mminstantdelay">
+      <div class="centerdiv">
+        <h3 id="roomname">{{room.get_room_name()}}</h3>
+        <ul>
+          {% for item in room.get_detail_list() %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+        <br><br>
+        <fieldset style="text-align:left;" class="fullfields">
+          <legend>Start Date</legend>
+          <input type="date" id="startdate" class="fieldsetfields"/>
+        </fieldset>
+        <fieldset style="text-align:left;" class="fullfields">
+          <legend>End Date</legend>
+          <input type="date" id="enddate" class="fieldsetfields"/>
+        </fieldset>
+        <br><br>
+        <div id="smart-button-container">
+          <div style="text-align: center;">
+            <div style="margin-bottom: 1.25rem;">
+              <select id="item-options"><option value="1-Day" price="70">1-Day - 70 SGD</option><option value="2-Day" price="135">2-Day - 135 SGD</option><option value="3-Day" price="200">3-Day - 200 SGD</option></select>
+              <select style="visibility: hidden" id="quantitySelect"></select>
+            </div>
+          <div id="paypal-button-container"></div>
+          </div>
+        </div>
+        <script>
+          function initPayPalButton() {
+            var shipping = 70;
+            var itemOptions = document.querySelector("#smart-button-container #item-options");
+        var quantity = parseInt();
+        var quantitySelect = document.querySelector("#smart-button-container #quantitySelect");
+        if (!isNaN(quantity)) {
+          quantitySelect.style.visibility = "visible";
+        }
+        var orderDescription = 'Studio Mini';
+        if(orderDescription === '') {
+          orderDescription = 'Item';
+        }
+        paypal.Buttons({
+          style: {
+            shape: 'pill',
+            color: 'blue',
+            layout: 'vertical',
+            label: 'paypal',
+
+          },
+          createOrder: function(data, actions) {
+            var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
+            var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
+            var tax = (0 === 0) ? 0 : (selectedItemPrice * (parseFloat(0)/100));
+            if(quantitySelect.options.length > 0) {
+              quantity = parseInt(quantitySelect.options[quantitySelect.selectedIndex].value);
+            } else {
+              quantity = 1;
+            }
+
+            tax *= quantity;
+            tax = Math.round(tax * 100) / 100;
+            var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
+            priceTotal = Math.round(priceTotal * 100) / 100;
+            var itemTotalValue = Math.round((selectedItemPrice * quantity) * 100) / 100;
+
+            return actions.order.create({
+              purchase_units: [{
+                description: orderDescription,
+                amount: {
+                  currency_code: 'SGD',
+                  value: priceTotal,
+                  breakdown: {
+                    item_total: {
+                      currency_code: 'SGD',
+                      value: itemTotalValue,
+                    },
+                    shipping: {
+                      currency_code: 'SGD',
+                      value: shipping,
+                    },
+                    tax_total: {
+                      currency_code: 'SGD',
+                      value: tax,
+                    }
+                  }
+                },
+                items: [{
+                  name: selectedItemDescription,
+                  unit_amount: {
+                    currency_code: 'SGD',
+                    value: selectedItemPrice,
+                  },
+                  quantity: quantity
+                }]
+              }]
+            });
+          },
+          onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+              alert('Transaction completed by ' + details.payer.name.given_name + '!');
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST", "/approve", true);
+              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.send(JSON.stringify({
+                  jdata: data,
+                  jactions: actions
+              }));
+            });
+          },
+          onError: function(err) {
+            console.log(err);
+          },
+        }).render('#paypal-button-container');
+      }
+      initPayPalButton();
+        </script>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% endblock %}
+
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+  <footer>
+    <div id="footerbody">
+      <div id="footer">
+        <img src="/Images/Icons/hamburger.png" id="hamburger" onclick="openmenu()"/>
+        <h3>Copyright © 2020 Sakhir Hotels All rights reserved.</h3>
+        <a href="tel:+06596322451"><img src="/Images/Icons/phone.png" id="icons"/>+65 96322451</a>
+        <a href="mailto:support@Sakhirhotels.com"><img src="/Images/Icons/mail.png" id="icons"/>support@sakhirhotels.com</a>
+      </div>
+    </div>
+
+
+    <div id="footermenu">
+      <div style="width:100%;height:100px;line-height:100px;vertical-align:middle;">
+        <img src="/Images/logofooter.png" id="footerlogo" onclick="rotatelogo()"/>
+      </div>
+
+      <div class="footersub" id="menu">
+        <h1>Menu</h1>
+        <a href="/" class="havegrad">Home</a><br>
+        <a href="/rooms" class="havegrad">Rooms</a><br>
+        <a href="/promotions" class="havegrad">Promotions</a><br>
+        <a href="/contactUs" class="havegrad">Contact</a>
+      </div>
+
+      <div class="footersub" id="footerproductmenu">
+        <h1>Rooms</h1>
+        <a href="/rooms/studio-rooms" class="productcat">Studio Rooms</a>
+        <a href="/rooms/studio-rooms#mini" class="subproducts havegrad">&gtStudio Mini</a>
+        <a href="/rooms/studio-rooms#deluxe" class="subproducts havegrad">&gtStudio Deluxe</a>
+        <br>
+        <a href="/rooms/regular-rooms" class="productcat">Regular Rooms</a>
+        <a href="/rooms/regular-rooms#single" class="subproducts havegrad">&gtRegular Single</a>
+        <a href="/rooms/regular-rooms#double" class="subproducts havegrad">&gtRegular Double</a>
+        <a href="/rooms/regular-rooms#family" class="subproducts havegrad">&gtRegular Family</a>
+        <br>
+        <a href="/rooms/suites" class="productcat">Suites</a>
+        <a href="/rooms/suites#mini" class="subproducts havegrad">&gtMini Suite</a>
+        <a href="/rooms/suites#suite" class="subproducts havegrad">&gtSuite</a>
+        <a href="/rooms/suites#presidential" class="subproducts havegrad">&gtPresidential Suite</a>
+        <br>
+        <h1>Promotions</h1>
+        <a href="/promotions/christmas-deals" class="subproducts havegrad">&gtChristmas Deals</a>
+        <a href="/promotions/dbs-card-promotion" class="subproducts havegrad">&gtDBS Card Promotion</a>
+        <a href="/promotions/family-deals" class="subproducts havegrad">&gtFamily Deals</a>
+      </div>
+
+      <div class="footersub" id="contactmenu">
+        <div id="contactsub">
+          <h1>Contact</h1>
+          <img src="/Images/Icons/building.png"/>
+          <p>Sakhir Hotels</p><br>
+          <img src="/Images/Icons/house.png" id="logo3line"/>
+          <p style="margin-right:5px;">180 Ang Mo Kio Ave 8<br>Singapore 569830</p><br>
+          <a href="tel:+06596322451" id="numbera"><img src="/Images/Icons/phone.png"/>+65 96322451</a><br>
+          <a href="support@sakhirhotels.com" id="maila"><img src="/Images/Icons/mail.png"/>support@sakhirhotels.com</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+
+  {% block livechat %}
+  {% include 'includes/_livechat.html' %}
+  {% endblock %}
+
+  <script>
+  var bgchange = 1;
+  window.onscroll = function() {myFunction()};
+  function myFunction() {
+    if (document.body.scrollTop > 2 * window.innerHeight - 100 || document.documentElement.scrollTop > 2 * window.innerHeight - 100){
+      document.getElementById('background1').style.opacity = "0";
+    } else if (document.body.scrollTop > window.innerHeight - 100 || document.documentElement.scrollTop > window.innerHeight - 100) {
+      document.getElementById('background').style.opacity = "0";
+      document.getElementById('background1').style.opacity = "1";
+    } else if (document.body.scrollTop < window.innerHeight || document.documentElement.scrollTop < window.innerHeight){
+      document.getElementById('background').style.opacity = "1";
+      document.getElementById('background1').style.opacity = "1";
+      document.getElementById('background2').style.opacity = "1";
+    }
+  }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="js/script.js"></script>
+  <title>Contact Us</title>
+  <link rel="icon" href="/Images/logotransparent.png">
+</head>
+<body>
+
+  <!--- - - - - - - - - - - -Full Navbar-------------------------->
+  <div id="prodnavbar">
+    {% block navbar %}
+    {% include 'includes/_mainnav.html' %}
+    {% endblock %}
+  </div>
+
+
+
+  <div id="resnavbar">
+    {% block resnavbar %}
+    {% include 'includes/_ressnav.html' %}
+    {% endblock %}
+  </div>
+  <!-- - - - - - - - Full Navbar-------------------------->
+
+
+
+
+  <div id="body1" class="body" style="width:100%;min-height:100vh;">
+    <div class="bannerdiv">
+      <img src="/Images/contact-us-banner.jpg" class="banner"/>
+      <h1 id="productheader" style="color:#181818">Contact Us</h1>
+    </div>
+
+    <div style="text-align:center;">
+      <h1 id="contacttext">Fill in the form below and we will get in touch with you shortly</h1>
+    </div>
+
+    <div id="contactmid">
+      <div id="contactpagemenu">
+        <h1>Sakhir Hotels</h1>
+        <img src="/Images/Icons/blackhouse.png" id="logo3line"/>
+        <p style="margin-right:5px;">180 Ang Mo Kio Ave 8,<br>Singapore 569830</p><br>
+        <a href="tel:+06596322451" id="contactpagenumbera"><img src="/Images/Icons/blackphone.png" id="phoneimg"/>+65 96322451</a><br>
+        <a href="mailto:support@sakhirhotels.com" id="contactpagemaila"><img src="/Images/Icons/blackemail.png" id="mailimg"/>support@sakhirhotels.com</a>
+      </div>
+
+      <div id="contactform">
+        <form method="post" id="cform">
+          <input type="text" name="firstname" id="firstname" class="contactname" placeholder=" First name*"/>
+          <input type="text" name="lastname" id="lastname" class="contactname" placeholder=" Last name*"/><br>
+          <input type="email" name="email" id="email" placeholder=" Email*" class="contactfield"/><br>
+          <input type="url" name="website" id="website" placeholder=" Website" class="contactfield"/><br>
+          <input type="tel" name="tel" id="phonenum" placeholder=" Phone number" class="contactfield"/><br>
+          <input type="text" name="msg" id="msg" placeholder=" Message" class="contactfield"/>
+          <button type="submit" id="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+  <footer>
+    <div id="footerbody">
+      <div id="footer">
+        <img src="/Images/Icons/hamburger.png" id="hamburger" onclick="openmenu()"/>
+        <h3>Copyright © 2020 Sakhir Hotels All rights reserved.</h3>
+        <a href="tel:+06596322451"><img src="/Images/Icons/phone.png" id="icons"/>+65 96322451</a>
+        <a href="mailto:support@Sakhirhotels.com"><img src="/Images/Icons/mail.png" id="icons"/>support@sakhirhotels.com</a>
+      </div>
+    </div>
+
+
+    <div id="footermenu">
+      <div style="width:100%;height:100px;line-height:100px;vertical-align:middle;">
+        <img src="/Images/logofooter.png" id="footerlogo" onclick="rotatelogo()"/>
+      </div>
+
+      <div class="footersub" id="menu">
+        <h1>Menu</h1>
+        <a href="/" class="havegrad">Home</a><br>
+        <a href="/rooms" class="havegrad">Rooms</a><br>
+        <a href="/promotions" class="havegrad">Promotions</a><br>
+        <a href="/contactUs" class="havegrad">Contact</a>
+      </div>
+
+      <div class="footersub" id="footerproductmenu">
+        <h1>Rooms</h1>
+        <a href="/rooms/studio-rooms" class="productcat">Studio Rooms</a>
+        <a href="/rooms/studio-rooms#mini" class="subproducts havegrad">&gtStudio Mini</a>
+        <a href="/rooms/studio-rooms#deluxe" class="subproducts havegrad">&gtStudio Deluxe</a>
+        <br>
+        <a href="/rooms/regular-rooms" class="productcat">Regular Rooms</a>
+        <a href="/rooms/regular-rooms#single" class="subproducts havegrad">&gtRegular Single</a>
+        <a href="/rooms/regular-rooms#double" class="subproducts havegrad">&gtRegular Double</a>
+        <a href="/rooms/regular-rooms#family" class="subproducts havegrad">&gtRegular Family</a>
+        <br>
+        <a href="/rooms/suites" class="productcat">Suites</a>
+        <a href="/rooms/suites#mini" class="subproducts havegrad">&gtMini Suite</a>
+        <a href="/rooms/suites#suite" class="subproducts havegrad">&gtSuite</a>
+        <a href="/rooms/suites#presidential" class="subproducts havegrad">&gtPresidential Suite</a>
+        <br>
+        <h1>Promotions</h1>
+        <a href="/promotions/christmas-deals" class="subproducts havegrad">&gtChristmas Deals</a>
+        <a href="/promotions/dbs-card-promotion" class="subproducts havegrad">&gtDBS Card Promotion</a>
+        <a href="/promotions/family-deals" class="subproducts havegrad">&gtFamily Deals</a>
+      </div>
+
+      <div class="footersub" id="contactmenu">
+        <div id="contactsub">
+          <h1>Contact</h1>
+          <img src="/Images/Icons/building.png"/>
+          <p>Sakhir Hotels</p><br>
+          <img src="/Images/Icons/house.png" id="logo3line"/>
+          <p style="margin-right:5px;">180 Ang Mo Kio Ave 8<br>Singapore 569830</p><br>
+          <a href="tel:+06596322451" id="numbera"><img src="/Images/Icons/phone.png"/>+65 96322451</a><br>
+          <a href="support@sakhirhotels.com" id="maila"><img src="/Images/Icons/mail.png"/>support@sakhirhotels.com</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+
+  {% block livechat %}
+  {% include 'includes/_livechat.html' %}
+  {% endblock %}
+
+  <script>
+  $(document).ready(function(){
+    if (window.innerWidth < window.innerHeight) {
+      document.querySelector('footer').style.marginTop = "100px";
+      document.getElementById("contactform").style.marginTop="10vh";
+      document.getElementById("contactpagemenu").style.marginTop="10vh";
+    } else {
+      document.getElementById('footer').style.marginTop="100px";
+    }
+
+    if (window.innerWidth < 1080) {
+      var fields = document.querySelectorAll('.contactfield');
+      fields.forEach(field => {
+        var newwidth = String(window.innerWidth/2 - 100)+"px";
+        field.style.width=newwidth;
+      });
+
+      var nfields = document.querySelectorAll('.contactname');
+      nfields.forEach(nfield => {
+        var newwidth = String((window.innerWidth/2 - 100)/2-12)+"px";
+        nfield.style.width=newwidth;
+      });
+
+      var newwidth = String(window.innerWidth/2 - 100)+"px";
+      document.getElementById('submit').style.width=newwidth;
+    }
+  });
+
+  window.onresize = function(){
+    if (window.innerWidth < window.innerHeight) {
+      location.reload();
+    } else {
+      location.reload();
+    };
+  }
+
+
+  $("#firstname").keyup(function(){
+    var field = document.getElementById("firstname");
+    if (/^[a-zA-Z]+$/.test(field.value)) {
+      field.style.borderRight="2px solid green";
+    } else {
+      field.style.borderRight="2px solid red";
+    }
+  })
+
+  $("#lastname").keyup(function(){
+    var field = document.getElementById("lastname");
+    if (/^[a-zA-Z]+$/.test(field.value)) {
+      field.style.borderRight="2px solid green";
+    } else {
+      field.style.borderRight="2px solid red";
+    }
+  })
+
+  $("#firstname").keyup(function(){
+    var field = document.getElementById("firstname");
+    if (/^[a-zA-Z]+$/.test(field.value)) {
+      field.style.borderRight="2px solid green";
+    } else {
+      field.style.borderRight="2px solid red";
+    }
+  })
+
+  $("#email").keyup(function(){
+    var field = document.getElementById("email");
+    if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(field.value)) {
+      field.style.borderRight="2px solid green";
+    } else {
+      field.style.borderRight="2px solid red";
+    }
+  })
+
+  $("#website").keyup(function(){
+    var field = document.getElementById("website");
+    try {
+      new URL(field.value);
+      field.style.borderRight="2px solid green";
+    } catch(err) {
+      field.style.borderRight="2px solid red";
+    }
+  })
+
+  $("#phonenum").keyup(function(){
+    var field = document.getElementById("phonenum");
+    if (/^-?\d+$/.test(field.value)) {
+      field.style.borderRight="2px solid green";
+    } else {
+      field.style.borderRight="2px solid red";
+    }
+  })
+
+  $("#msg").keyup(function(){
+    var field = document.getElementById("msg");
+    if (field.value.length > 20) {
+      field.style.borderRight="2px solid green";
+    } else {
+      field.style.borderRight="2px solid red";
+    }
+  })
+  </script>
+</body>

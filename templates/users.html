@@ -1,0 +1,83 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Users</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no users.</p>
+  {% elif count == 1 %}
+  <p>There is 1 user.</p>
+  {% else %}
+  <p>There are {{ count }} users.</p>
+  {% endif %}
+</div>
+
+<div>
+  {% from "includes/_formHelper.html" import render_field %}
+
+  <h1 class="display-7">Search User</h1>
+
+  <form method="POST" action="">
+    <div class="form-group">
+      {{ render_field(form.username, class="form-control", style="list-style-type:none") }}
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary"/>
+  </form>
+</div>
+<br>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Gender</th>
+        <th>Membership</th>
+        <th>Swab Test(Click to view)</th>
+        <th>Remarks</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    {% if users_list != "None" %}
+    <tbody>
+    {% for user in users_list %}
+      <tr>
+        <td>{{ user.get_user_id() }}</td>
+        <td>{{ user.get_first_name() }}</td>
+        <td>{{ user.get_last_name() }}</td>
+        <td>{{ user.get_gender() }}</td>
+        {% if user.get_membership() == 'C' %}
+        <td>Customer</td>
+        {% elif user.get_membership() == 'M' %}
+        <td>Member</td>
+        {% elif user.get_membership() == 'A' %}
+        <td>Admin</td>
+        {% endif %}
+
+        {% if user.get_swabcheck() == 'Negative' %}
+        <td><a href="/uploads/{{user.get_username()}}.png">Verified</a></td>
+        {% elif user.get_swabcheck() == 'Positive' %}
+        <td><a href="/uploads/{{user.get_username()}}.png">Not verified(+)</a></td>
+        {% else %}
+        <td>Not Verified</td>
+        {% endif %}
+        <td>{{ user.get_remarks() }}</td>
+        <td><a href="/a-updateUser/{{user.get_user_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_user', id=user.get_user_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user.get_first_name()}} {{user.get_last_name()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    {% elif users_list == "None" %}
+    <h3>User not found</h3>
+    {% elif users_list == "Invalid" %}
+    <h3>Invalid search query</h3>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}

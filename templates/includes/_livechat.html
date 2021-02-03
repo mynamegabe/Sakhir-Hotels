@@ -1,0 +1,76 @@
+<div id="livechat">
+  <img src="/Images/Icons/livechat.png" id="livechaticon" onclick="openlivechat()"/>
+  <h1 onclick="openlivechat()">Live support</h1>
+  <img src="/Images/Icons/blackarrowdown.png" id="livechatclose" onclick="closelivechat()"/>
+  <div id="supportcontainer">
+    {% if support == False %}
+    <div id="detailsform">
+      {% from "includes/_formHelper.html" import render_field %}
+      <form method="POST" action="">
+        <div class="form-group">
+          <fieldset>
+            <legend>Full Name</legend>
+            {{ render_field(form.name, class="form-control") }}
+          </fieldset>
+        </div>
+        <div class="form-group">
+          <fieldset>
+            <legend>Email</legend>
+            {{ render_field(form.email, class="form-control") }}
+          </fieldset>
+        </div>
+        <div class="form-group">
+          <fieldset>
+            <legend>Phone Number</legend>
+            {{ render_field(form.phone, class="form-control") }}
+          </fieldset>
+        </div>
+        <div class="form-group">
+          <fieldset>
+            <legend>Query</legend>
+            {{ render_field(form.query, class="form-control") }}
+          </fieldset>
+        </div>
+        <input type="submit" value="Start" id="detailssubmit"/>
+      </form>
+    </div>
+    {% elif support == True  %}
+    <script>
+    document.getElementById("livechat").style.transition="none";
+    openlivechat()
+    setTimeout(function() {
+      document.getElementById("livechat").style.transition="width 0.5s,height 0.5s";
+      console.log("Done");
+    },200);
+    setTimeout(function(){
+      if (document.getElementById("inputtext").value == "") {
+        document.getElementById("inputtext").value = "reload";
+        document.getElementById("sendtext").submit();
+        console.log("lol")
+      }
+    },3000)
+    </script>
+
+    <div id="supportchat">
+      <div id="chatbox">
+        {% for msg in chat %}
+        {% if msg[0:4] == "cust" %}
+          <div class="chatline">
+            <h3>{{ msg[5:]}}</h3>
+          </div>
+        {% elif msg[0:4] == "admn" %}
+          <div class="chatline">
+            <h4>{{ msg[5:]}}</h4>
+          </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% from "includes/_formHelper.html" import render_field %}
+      <form method="POST" action="" id="sendtext">
+        {{ render_field(form.inputtext, class="form-control") }}
+        <input type="submit" value="Send" id="chatsubmit"/>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+</div>

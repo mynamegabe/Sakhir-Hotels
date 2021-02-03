@@ -1,0 +1,81 @@
+<a href="/"><img src="/Images/logotransparent.png" id="logo"/></a>
+<ul id="navbarlist">
+  <a href="/"><li id="home">Home</li></a>
+  <a href="/rooms"><li id="products">Rooms</li></a>
+  <a href="/promotions"><li id="promotions">Promotions</li></a>
+  <a href="/news"><li id="news">News</li></a>
+</ul>
+
+{% if 'auth' in session %}
+<a href="/admin" id="adminbutton"><img src="/Images/Icons/admin.png"/></a>
+{% elif 'login' in session %}
+<a href="/profile" id="profilebutton"><img src="/Images/Icons/profile.png"/></a>
+{% else %}
+<a href="/login" id="loginbutton"><img src="/Images/Icons/login.png"/></a>
+{% endif %}
+
+<div id="darkmodebutton" onclick="darkmode()">
+  <img src="/Images/Icons/sun.png" id="darkmodeswitch"/>
+</div>
+
+<a href="/contactUs" id="nava"><span>Contact&#10140;</span></a>
+</div>
+
+<div id="productsmenu" class="navbarmenus">
+<div id="mainprod">
+  <ul>
+    <a href="/rooms/studio-rooms"><li id="studiobutton" class="mainprodbutton">Studio</li></a>
+    <a href="/rooms/regular-rooms"><li id="regularbutton" class="regularbutton">Regular</li></a>
+    <a href="/rooms/suites"><li id="suitesbutton" class="mainprodbutton">Suites</li></a>
+  </ul>
+</div>
+
+<div id="subcolumnall">
+  <div id="studiosub" class="subcolumn">
+    <ul>
+      <a href="/rooms/studio-rooms#mini"><li id="studiominibutton" class="studiobutton">Studio Mini</li></a>
+      <a href="/rooms/studio-rooms/#deluxe"><li id="studiodeluxebutton" class="studiobutton">Studio Deluxe</li></a>
+    </ul>
+  </div>
+
+  <div id="regularsub" class="subcolumn">
+    <ul>
+      <a href="/rooms/regular-rooms#single"><li id="singleregularbutton" class="regularbutton">Single</li></a>
+      <a href="/rooms/regular-rooms#double"><li id="doubleregularbutton" class="regularbutton">Double</li></a>
+      <a href="/rooms/regular-rooms#family"><li id="familyregularbutton" class="regularbutton">Family</li></a>
+    </ul>
+  </div>
+
+  <div id="suitessub" class="subcolumn">
+    <ul>
+      <a href="/rooms/suites#mini"><li id="minisuitebutton" class="suitesbutton">Mini Suite</li></a>
+      <a href="/rooms/suites#suite"><li id="suitebutton" class="suitesbutton">Suite</li></a>
+      <a href="/rooms/suites#presidential"><li id="presidentialsuitebutton" class="suitesbutton">Presidential Suite</li></a>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div id="newsmenu" class="navbarmenus">
+<div id="mainprod">
+  <ul>
+    <a href="White-Papers.html"><li class="mainprodbutton">White Papers</li></a>
+    <a href="Case-Studies.html"><li class="mainprodbutton">Case Studies</li></a>
+    <a href="Community.html"><li class="mainprodbutton">Community</li></a>
+    <a href="Product-Data-Sheets.html"><li class="mainprodbutton">Product Data Sheets</li></a>
+    <a href="Brochures.html"><li class="mainprodbutton">Brochures</li></a>
+</div>
+</div>
+
+<div id="promotionsmenu" class="navbarmenus">
+<div id="mainprod">
+  <ul>
+    {% for promo in promo_list %}
+      <a href="/promotion/{{promo.get_promo_cn()}}"><li class="mainprodbutton">{{promo.get_promo_name()}}</li></a>
+    {% endfor %}
+    <!--
+    <a href="/promotions/christmas-deals"><li class="mainprodbutton">Christmas Deals</li></a>
+    <a href="/promotions/dbs-card-promotion"><li class="mainprodbutton">DBS Card Promotion</li></a>
+    <a href="/promotions/family-deals"><li class="mainprodbutton">Family Deals</li></a>
+  -->
+</div>

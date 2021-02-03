@@ -1,0 +1,85 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Chats</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no live chats.</p>
+  {% elif count == 1 %}
+  <p>There is 1 live chat.</p>
+  {% else %}
+  <p>There are {{ count }} live chats.</p>
+  {% endif %}
+</div>
+
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Chat ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Query</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for chat in chats_list %}
+    {% if chat.get_status() == "Incomplete" %}
+      <tr>
+        <td>{{ chat.get_chat_id() }}</td>
+        <td>{{ chat.get_name() }}</td>
+        <td>{{ chat.get_email() }}</td>
+        <td>{{ chat.get_phone() }}</td>
+        <td>{{ chat.get_query() }}</td>
+        <td>{{ chat.get_status() }}</td>
+        <td><a href="/a-updateChat/{{chat.get_chat_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_chat', id=chat.get_chat_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{chat.get_name()}}?');">
+          </form>
+        </td>
+        <td><a href="/a-chat/{{ chat.get_chat_id() }}" class="btn">Chat</a></td>
+      </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+  <br>
+  <h1 class="display-5">Chat Logs</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Chat ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Query</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for chatlog in chatlogs_list %}
+    {% if chatlog.get_status() == "Complete" %}
+      <tr>
+        <td>{{ chatlog.get_chatlog_id() }}</td>
+        <td>{{ chatlog.get_name() }}</td>
+        <td>{{ chatlog.get_email() }}</td>
+        <td>{{ chatlog.get_phone() }}</td>
+        <td>{{ chatlog.get_query() }}</td>
+        <td>{{ chatlog.get_status() }}</td>
+        <td><a href="/a-updateChatLog/{{chatlog.get_chatlog_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_chatlog', id=chatlog.get_chatlog_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{chatlog.get_name()}}?');">
+          </form>
+        </td>
+        <td><a href="/a-chatlog/{{ chatlog.get_chatlog_id() }}" class="btn">View Chat</a></td>
+      </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

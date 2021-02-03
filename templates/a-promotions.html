@@ -1,0 +1,46 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Promotions</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no promotions.</p>
+  {% elif count == 1 %}
+  <p>There is 1 promotion.</p>
+  {% else %}
+  <p>There are {{ count }} promotions.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Promo ID</th>
+        <th>Promo Name</th>
+        <th>Description</th>
+        <th>End Date</th>
+        <th>Remarks</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for promo in promo_list %}
+      <tr>
+        <td>{{ promo.get_promo_id() }}</td>
+        <td>{{ promo.get_promo_name() }}</td>
+        <td>{{ promo.get_desc() }}</td>
+        <td>{{ promo.get_endDate() }}</td>
+        <td>{{ promo.get_remarks() }}</td>
+        <td><a href="/a-updatePromo/{{promo.get_promo_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_promo', id=promo.get_promo_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{promo.get_promo_name()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

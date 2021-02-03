@@ -1,0 +1,48 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Room Bookings</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no bookings.</p>
+  {% elif count == 1 %}
+  <p>There is 1 booking.</p>
+  {% else %}
+  <p>There are {{ count }} bookings.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Booking ID</th>
+        <th>Customer ID</th>
+        <th>Room Type</th>
+        <th>Customer Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for booking in booking_list %}
+      <tr>
+        <td>{{ booking.get_booking_id() }}</td>
+        <td>{{ booking.get_customer_id() }}</td>
+        <td>{{ booking.get_customer_name() }}</td>
+        <td>{{ booking.get_room_type() }}</td>
+        <td>{{ booking.get_startDate() }}</td>
+        <td>{{ booking.get_endDate() }}</td>
+        <td><a href="/a-updateBooking/{{booking.get_booking_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_booking', id=booking.get_booking_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{booking.get_booking_name()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

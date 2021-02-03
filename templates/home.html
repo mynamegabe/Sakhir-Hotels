@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script type="text/javascript" src="js/script.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <title>Sakhir Hotels</title>
+  <link rel="icon" href="/Images/logotransparent.png">
+  <meta http-equiv='cache-control' content='no-cache'>
+  <meta http-equiv='expires' content='0'>
+  <meta http-equiv='pragma' content='no-cache'>
+</head>
+<body>
+  {% if swab == True %}
+  <script>
+    alert("Swab test submitted")
+  </script>
+  {% endif %}
+  <script>
+  if (String(window.location).includes("booked=True")) {
+    alert("Room Booked!")
+  }
+  </script>
+  <!--- - - - - - - - - - - -Full Navbar-------------------------->
+  <div id="navbar">
+    {% block navbar %}
+    {% include 'includes/_homenav.html' %}
+    {% endblock %}
+  </div>
+
+  <div id="resnavbar">
+    {% block resnavbar %}
+    {% include 'includes/_homeresnav.html' %}
+    {% endblock %}
+  </div>
+    <!-- - - - - - - - - - - - - - - -Full Navbar-------------------------->
+
+  <div id="body1" class="body">
+    <img src="/Images/hotelbg/h9.jpg" id="background"/>
+    <img src="/Images/hotelbg/h7.jpg" id="background1"/>
+    <img src="/Images/hotelbg/h4.jpg" id="background2"/>
+    <div id="innerdiv1">
+      <h2 id="bannertext3" style="margin-top:0px;padding-top:50px">Sakhir</h2><br>
+      <h2 id="bannertext2">Hotels</h2>
+    </div>
+
+    <div id="roomform" class="instantdelay">
+      {% block searchform %}
+      {% from "includes/_formHelper.html" import render_field %}
+
+      <form method="POST" action="">
+        <div class="vertalign">
+          <h1>Search for a room</h1>
+          <fieldset style="text-align:left;" class="halffields">
+            <legend>Start Date</legend>
+            {{ render_field(searchform.startdate, class="form-control fieldsetfields") }}
+          </fieldset>
+          <fieldset style="text-align:left;" class="halffields">
+            <legend>End Date</legend>
+            {{ render_field(searchform.enddate, class="form-control fieldsetfields") }}
+          </fieldset>
+          <fieldset style="text-align:left;" class="halffields">
+            <legend>No. of Adults</legend>
+            {{ render_field(searchform.adults, class="form-control fieldsetfields") }}
+          </fieldset>
+          <fieldset style="text-align:left;" class="halffields">
+            <legend>No. of Children</legend>
+            {{ render_field(searchform.children, class="form-control fieldsetfields") }}
+          </fieldset>
+          <h3>Other options</h3>
+          <input type="checkbox" name="breakfast" value="true" class="roomoptions">
+          <label for="breakfast">Breakfast</label>
+          <br>
+          <input type="submit" value="Search" class="btn btn-primary animatedbtn"/>
+        </div>
+      </form>
+      {% endblock %}
+    </div>
+
+    <a href="#rooms" id="arrowdowna"><img src="/Images/Icons/arrowdown.png" id="arrowdownimg"/></a>
+  </div>
+
+  <div id="rooms" class="body">
+    {% block rooms %}
+    {% if rooms == None %}
+    <div id="filltextbox">
+      <div id="diagonalspan">a</div>
+      <h1 id="filltext">Search for a room!</h1>
+    </div>
+    {% elif roomcount > 0 %}
+    <div id="roomscroll">
+      {% for room in rooms %}
+      <div class="roombox">
+        <div class="detailcenter">
+          <h1>{{room.get_room_name()}}</h1>
+          <ul>
+            {% for detail in room.get_detail_list() %}
+            <li>{{ detail }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <script>
+    window.location.replace("/#rooms");
+    </script>
+    {% else %}
+    <div id="filltextbox">
+      <div id="diagonalspan">a</div>
+      <h1 id="filltext">Room not found</h1>
+    </div>
+    <script>
+    window.location.replace("/#rooms")
+    </script>
+    {% endif %}
+    {% endblock %}
+    <a href="#body3" id="arrowdowna"><img src="/Images/Icons/arrowdown.png" id="arrowdownimg"/></a>
+  </div>
+
+  <div id="body3" class="body">
+    <h1>hi</h1>
+    <a href="#footerbody" id="arrowdowna"><img src="/Images/Icons/arrowdown.png" id="arrowdownimg"/></a>
+  </div>
+
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+  <footer>
+    <div id="footerbody">
+      <div id="footer">
+        <img src="/Images/Icons/hamburger.png" id="hamburger" onclick="openmenu()"/>
+        <h3>Copyright © 2020 Sakhir Hotels All rights reserved.</h3>
+        <a href="tel:+06596322451"><img src="/Images/Icons/phone.png" id="icons"/>+65 96322451</a>
+        <a href="mailto:support@Sakhirhotels.com"><img src="/Images/Icons/mail.png" id="icons"/>support@sakhirhotels.com</a>
+      </div>
+    </div>
+
+
+    <div id="footermenu">
+      <div style="width:100%;height:100px;line-height:100px;vertical-align:middle;">
+        <img src="/Images/logofooter.png" id="footerlogo" onclick="rotatelogo()"/>
+      </div>
+
+      <div class="footersub" id="menu">
+        <h1>Menu</h1>
+        <a href="/" class="havegrad">Home</a><br>
+        <a href="/rooms" class="havegrad">Rooms</a><br>
+        <a href="/promotions" class="havegrad">Promotions</a><br>
+        <a href="/contactUs" class="havegrad">Contact</a>
+      </div>
+
+      <div class="footersub" id="footerproductmenu">
+        <h1>Rooms</h1>
+        <a href="/rooms/studio-rooms" class="productcat">Studio Rooms</a>
+        <a href="/rooms/studio-rooms#mini" class="subproducts havegrad">&gtStudio Mini</a>
+        <a href="/rooms/studio-rooms#deluxe" class="subproducts havegrad">&gtStudio Deluxe</a>
+        <br>
+        <a href="/rooms/regular-rooms" class="productcat">Regular Rooms</a>
+        <a href="/rooms/regular-rooms#single" class="subproducts havegrad">&gtRegular Single</a>
+        <a href="/rooms/regular-rooms#double" class="subproducts havegrad">&gtRegular Double</a>
+        <a href="/rooms/regular-rooms#family" class="subproducts havegrad">&gtRegular Family</a>
+        <br>
+        <a href="/rooms/suites" class="productcat">Suites</a>
+        <a href="/rooms/suites#mini" class="subproducts havegrad">&gtMini Suite</a>
+        <a href="/rooms/suites#suite" class="subproducts havegrad">&gtSuite</a>
+        <a href="/rooms/suites#presidential" class="subproducts havegrad">&gtPresidential Suite</a>
+        <br>
+        <h1>Promotions</h1>
+        <a href="/promotions/christmas-deals" class="subproducts havegrad">&gtChristmas Deals</a>
+        <a href="/promotions/dbs-card-promotion" class="subproducts havegrad">&gtDBS Card Promotion</a>
+        <a href="/promotions/family-deals" class="subproducts havegrad">&gtFamily Deals</a>
+      </div>
+
+      <div class="footersub" id="contactmenu">
+        <div id="contactsub">
+          <h1>Contact</h1>
+          <img src="/Images/Icons/building.png"/>
+          <p>Sakhir Hotels</p><br>
+          <img src="/Images/Icons/house.png" id="logo3line"/>
+          <p style="margin-right:5px;">180 Ang Mo Kio Ave 8<br>Singapore 569830</p><br>
+          <a href="tel:+06596322451" id="numbera"><img src="/Images/Icons/phone.png"/>+65 96322451</a><br>
+          <a href="support@sakhirhotels.com" id="maila"><img src="/Images/Icons/mail.png"/>support@sakhirhotels.com</a>
+        </div>
+      </div>
+          <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+    </div>
+  </footer>
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+
+  {% block livechat %}
+  {% include 'includes/_livechat.html' %}
+  {% endblock %}
+
+  <script>
+  var lastScrollTop = 0;
+  var bgchange = 1;
+  window.onscroll = function() {scrollFunc()};
+  function scrollFunc() {
+    try {
+      var st = $(this).scrollTop();
+      if (st > lastScrollTop){
+        var oldleft = $('#diagonalspan').css('left');
+        var newleft = String(parseInt(oldleft.substring(0, oldleft.length - 2)) + 3) + "px";
+        document.getElementById('diagonalspan').style.left = newleft;
+      } else {
+        var oldleft = $('#diagonalspan').css('left');
+        var newleft = String(parseInt(oldleft.substring(0, oldleft.length - 2)) - 3) + "px";
+        document.getElementById('diagonalspan').style.left = newleft;
+      }
+      lastScrollTop = st;
+      document.getElementById('diagonalspan').style.left = newleft;
+    } catch(err) {
+        /**/
+    }
+    if (document.body.scrollTop > 2 * window.innerHeight - 100 || document.documentElement.scrollTop > 2 * window.innerHeight - 100){
+      document.getElementById('background1').style.opacity = "0";
+    } else if (document.body.scrollTop > window.innerHeight - 100 || document.documentElement.scrollTop > window.innerHeight - 100) {
+      document.getElementById('background').style.opacity = "0";
+      document.getElementById('background1').style.opacity = "1";
+    } else if (document.body.scrollTop < window.innerHeight || document.documentElement.scrollTop < window.innerHeight){
+      document.getElementById('background').style.opacity = "1";
+      document.getElementById('background1').style.opacity = "1";
+      document.getElementById('background2').style.opacity = "1";
+    }
+  }
+
+  </script>
+  <script>
+    AOS.init();
+  </script>
+</body>

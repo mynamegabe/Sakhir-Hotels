@@ -1,0 +1,42 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Temperature Logs</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no temperature logs.</p>
+  {% elif count == 1 %}
+  <p>There is 1 temperature log.</p>
+  {% else %}
+  <p>There are {{ count }} temperature logs.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Temperature</th>
+        <th>Results</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for log in temp_list %}
+      <tr>
+        <td>{{ log.get_user_id() }}</td>
+        <td>{{ log.get_username() }}</td>
+        <td>{{ log.get_temperature() }}</td>
+        <td>{{ log.get_swabcheck() }}</td>
+        <td><a href="/a-updateTempLog/{{log.get_templog_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_TempLog', id=log.get_user_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete the temperature log of {{log.get_username()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

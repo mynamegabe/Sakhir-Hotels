@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script type="text/javascript" src="../js/script.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <title>Sakhir Hotels</title>
+  <link rel="icon" href="/Images/logotransparent.png">
+  <meta http-equiv='cache-control' content='no-cache'>
+  <meta http-equiv='expires' content='0'>
+  <meta http-equiv='pragma' content='no-cache'>
+</head>
+<body>
+
+  <!--- - - - - - - - - - - -Full Navbar-------------------------->
+  <div id="prodnavbar">
+    {% block navbar %}
+    {% include 'includes/_mainnav.html' %}
+    {% endblock %}
+  </div>
+
+  <div id="resnavbar">
+    {% block resnavbar %}
+    {% include 'includes/_ressnav.html' %}
+    {% endblock %}
+  </div>
+  <!--- - - - - - - - - - - -Full Navbar-------------------------->
+
+  <div id="body1" class="body" style="text-align:center">
+    {% block promo %}
+    <img src="/Images/{{promo.get_promo_cn()}}.png" style="margin-top:200px;"/>
+    <h1>{{promo.get_promo_name()}}</h1>
+    <h3>{{promo.get_desc()}}</h3>
+    <h3>{{promo.get_endDate()}}</h3>
+    {% endblock %}
+  </div>
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+  <footer>
+    <div id="footerbody">
+      <div id="footer">
+        <img src="/Images/Icons/hamburger.png" id="hamburger" onclick="openmenu()"/>
+        <h3>Copyright © 2020 Sakhir Hotels All rights reserved.</h3>
+        <a href="tel:+06596322451"><img src="/Images/Icons/phone.png" id="icons"/>+65 96322451</a>
+        <a href="mailto:support@Sakhirhotels.com"><img src="/Images/Icons/mail.png" id="icons"/>support@sakhirhotels.com</a>
+      </div>
+    </div>
+
+
+    <div id="footermenu">
+      <div style="width:100%;height:100px;line-height:100px;vertical-align:middle;">
+        <img src="/Images/logofooter.png" id="footerlogo" onclick="rotatelogo()"/>
+      </div>
+
+      <div class="footersub" id="menu">
+        <h1>Menu</h1>
+        <a href="/" class="havegrad">Home</a><br>
+        <a href="/rooms" class="havegrad">Rooms</a><br>
+        <a href="/promotions" class="havegrad">Promotions</a><br>
+        <a href="/contactUs" class="havegrad">Contact</a>
+      </div>
+
+      <div class="footersub" id="footerproductmenu">
+        <h1>Rooms</h1>
+        <a href="/rooms/studio-rooms" class="productcat">Studio Rooms</a>
+        <a href="/rooms/studio-rooms#mini" class="subproducts havegrad">&gtStudio Mini</a>
+        <a href="/rooms/studio-rooms#deluxe" class="subproducts havegrad">&gtStudio Deluxe</a>
+        <br>
+        <a href="/rooms/regular-rooms" class="productcat">Regular Rooms</a>
+        <a href="/rooms/regular-rooms#single" class="subproducts havegrad">&gtRegular Single</a>
+        <a href="/rooms/regular-rooms#double" class="subproducts havegrad">&gtRegular Double</a>
+        <a href="/rooms/regular-rooms#family" class="subproducts havegrad">&gtRegular Family</a>
+        <br>
+        <a href="/rooms/suites" class="productcat">Suites</a>
+        <a href="/rooms/suites#mini" class="subproducts havegrad">&gtMini Suite</a>
+        <a href="/rooms/suites#suite" class="subproducts havegrad">&gtSuite</a>
+        <a href="/rooms/suites#presidential" class="subproducts havegrad">&gtPresidential Suite</a>
+        <br>
+        <h1>Promotions</h1>
+        <a href="/promotions/christmas-deals" class="subproducts havegrad">&gtChristmas Deals</a>
+        <a href="/promotions/dbs-card-promotion" class="subproducts havegrad">&gtDBS Card Promotion</a>
+        <a href="/promotions/family-deals" class="subproducts havegrad">&gtFamily Deals</a>
+      </div>
+
+      <div class="footersub" id="contactmenu">
+        <div id="contactsub">
+          <h1>Contact</h1>
+          <img src="/Images/Icons/building.png"/>
+          <p>Sakhir Hotels</p><br>
+          <img src="/Images/Icons/house.png" id="logo3line"/>
+          <p style="margin-right:5px;">180 Ang Mo Kio Ave 8<br>Singapore 569830</p><br>
+          <a href="tel:+06596322451" id="numbera"><img src="/Images/Icons/phone.png"/>+65 96322451</a><br>
+          <a href="support@sakhirhotels.com" id="maila"><img src="/Images/Icons/mail.png"/>support@sakhirhotels.com</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
+  {% block livechat %}
+  {% include 'includes/_livechat.html' %}
+  {% endblock %}
+</body>
+</html>

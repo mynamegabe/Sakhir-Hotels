@@ -1,0 +1,41 @@
+<a href="/"><img src="/Images/logotransparent.png" id="logo" style="margin-top:15px;"/></a>
+<img src="/Images/Icons/hamburger.png" id="navburger" onclick="resopennav()">
+
+{% if 'auth' in session %}
+<a href="/swabtest" id="swabbutton"><img src="/Images/Icons/virus.png"/></a>
+<a href="/admin" id="adminbutton"><img src="/Images/Icons/admin.png"/></a>
+{% elif 'login' in session %}
+<a href="/swabtest" id="swabbutton"><img src="/Images/Icons/virus.png"/></a>
+<a href="/profile" id="profilebutton"><img src="/Images/Icons/profile.png"/></a>
+{% else %}
+<a href="/login" id="loginbutton"><img src="/Images/Icons/login.png"/></a>
+{% endif %}
+<!-- change to res switch -->
+<div id="resdarkmodebutton" onclick="darkmode()">
+  <img src="/Images/Icons/sun.png" id="resdarkmodeswitch"/>
+</div>
+
+<a href="/contactUs" id="nava"><span>Contact&#10140;</span></a>
+<div id="resnavpulldown">
+  <a id="reshome" href="/"><div>Home</div></a>
+  <a onclick="productsdropdown(this)" href="#"><div>Rooms<img src="/Images/Icons/arrowdown.png" class="dropdownarrow"/></div></a>
+  <div id="resproductmenu" class="resmenus">
+    <a href="/rooms/studio-rooms">Studio</a>
+    <a href="/rooms/regular-rooms">Regular</a>
+    <a href="/rooms/suites">Suites</a>
+  </div>
+  <a onclick="promotionsdropdown(this)" href="#"><div>Promotions<img src="/Images/Icons/arrowdown.png" class="dropdownarrow"/></div></a>
+  <div id="respromotionmenu" class="resmenus">
+    <a href="/promotions/christmas-deals">Christmas Deals</a>
+    <a href="/promotions/dbs-card-promotion">DBS Card Promotion</a>
+    <a href="/promotions/family-deals">Family Deals</a>
+  </div>
+  <a onclick="newsdropdown(this)" href="#"><div>News<img src="/Images/Icons/arrowdown.png" class="dropdownarrow"/></div></a>
+  <div id="resnewsmenu" class="resmenus">
+    <a href="White-Papers.html">White Papers</a>
+    <a href="Case-Studies.html">Case Studies</a>
+    <a href="Community.html">Community</a>
+    <a href="Product-Data-Sheets.html">Product Data Sheets</a>
+    <a href="Brochures.html">Brochures</a>
+  </div>
+</div>

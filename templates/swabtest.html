@@ -1,0 +1,64 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/css/forms.css">
+  <title>COVID-19 Prevention</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <link rel="icon" href="/Images/Icons/virus.png">
+</head>
+<body>
+  <script>
+    function closemanual() {
+      document.getElementById("manualentry").style.display="none";
+      document.getElementById("imgupload").style.display="block";
+    }
+
+    function closeimage() {
+      document.getElementById("manualentry").style.display="block";
+      document.getElementById("imgupload").style.display="none";
+    }
+  </script>
+  <div id="centerform">
+    <a href="/"><img src="/Images/logotransparent.png"/></a>
+    <h1>Swab Test results upload</h1>
+    <button onclick="closemanual()">Image Upload</button><button onclick="closeimage()">Manual Entry</button>
+    <div id="imgupload">
+      <h3>Upload a screenshot and our server will automatically scan for your results</h3>
+      <img src="/Images/example.png" id="largeimg"/>
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <fieldset>
+          <legend>Image</legend>
+          <input type="file" name="file" id="file" />
+        </fieldset>
+        <input type="submit" id="submit"/>
+      </form>
+    </div>
+    <div id="manualentry" style="display:none">
+      <h3>Manually enter your results</h3>
+      {% block content %}
+      {% from "includes/_formHelper.html" import render_field %}
+      <form method="POST" action="">
+        <fieldset>
+          <legend>First 4 digits of IC</legend>
+          {{ render_field(form.ic, class="form-control") }}
+        </fieldset>
+        <fieldset>
+          <legend>First Name</legend>
+          {{ render_field(form.first_name, class="form-control") }}
+        </fieldset>
+        <fieldset>
+          <legend>Last Name</legend>
+          {{ render_field(form.last_name, class="form-control") }}
+        </fieldset>
+        <fieldset>
+          <legend>Results</legend>
+          {{ render_field(form.swabcheck, class="form-check", style="list-style-type:none") }}
+        </fieldset>
+        <h4>By submitting this form, I confirm that the data I have input is completely true.</h4>
+        <input type="submit" value="Submit" id="submit"/>
+      </form>
+      {% endblock %}
+    </div>
+  </div>
+</body>
+</html>

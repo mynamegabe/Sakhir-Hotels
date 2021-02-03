@@ -1,0 +1,44 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Swab Test Logs</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no swab test logs.</p>
+  {% elif count == 1 %}
+  <p>There is 1 swab test log.</p>
+  {% else %}
+  <p>There are {{ count }} swab test logs.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>IC</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Results</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for log in swab_list %}
+      <tr>
+        <td>{{ log.get_user_id() }}</td>
+        <td>{{ log.get_ic() }}</td>
+        <td>{{ log.get_first_name() }}</td>
+        <td>{{ log.get_last_name() }}</td>
+        <td>{{ log.get_swabcheck() }}</td>
+        <td><a href="/a-updateSwab/{{log.get_user_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_SwabLog', id=log.get_user_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete the swab test log of {{log.get_first_name()}} {{log.get_last_name()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

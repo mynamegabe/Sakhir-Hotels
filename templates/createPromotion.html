@@ -1,0 +1,32 @@
+{% extends "admin.html" %}
+{% block title %}Create Promotion{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+
+<h1 class="display-4">Create Promotion</h1>
+<form action="/promoimgupload" target="_blank" method="POST" enctype="multipart/form-data">
+  <fieldset>
+    <legend>Promotion Image</legend>
+    <input type="file" name="file" />
+    <input type="submit"/>
+  </fieldset>
+</form>
+<form method="POST" action="">
+  <div class="form-group">
+    {{ render_field(form.promo_name, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.desc, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.endDate, class="form-control") }}
+  </div>
+  <div id="prof">
+    <div class="form-group">
+      {{ render_field(form.remarks, class="form-control") }}
+    </div>
+  </div>
+  <input type="submit" value="Submit" class="btn btn-primary"/>
+</form>
+{% endblock %}
