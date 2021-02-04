@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
-from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm
-import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog
+from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm
+import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import pytesseract
@@ -233,8 +233,122 @@ def suites():
 
 @app.route('/contactUs', methods=['GET', 'POST'])
 def contact_us():
-    dict = initSupport()
-    return render_template('contact.html',promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"])
+    if request.method == "POST":
+        data = request.form
+        firstname = data['firstname']
+        lastname = data['lastname']
+        email = data['email']
+        tel = data['tel']
+        msg = data['msg']
+        contact = Contact.Contact(firstname, lastname, email, tel, msg)
+        db = shelve.open('storage.db', 'c')
+        contact_dict = db['Contacts']
+        contact_dict[contact.get_contact_id()] = contact
+        db['Contacts'] = contact_dict
+        dict = initSupport()
+        return render_template('contact.html', promo_list=loadpromo(), form=dict["form"], chat=dict["chat"],support=dict["support"])
+    else:
+        dict = initSupport()
+        return render_template('contact.html',promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"])
+
+@app.route('/a-contacts', methods=['GET'])
+def retrieve_contacts():
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'r')
+        contacts_dict = db['Contacts']
+        db.close()
+
+        contacts_list = []
+        for key in contacts_dict:
+            contact = contacts_dict.get(key)
+            contacts_list.append(contact)
+            print(contact)
+
+
+        return render_template('a-contacts.html', count=len(contacts_list), contact_list=contacts_list)
+    else:
+        return "Unauthorized"
+
+@app.route('/a-deleteContact/<int:id>', methods=['POST'])
+def delete_contact(id):
+
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        contacts_dict = db['Contacts']
+
+        contacts_dict.pop(id)
+
+        db['Contacts'] = contacts_dict
+        db.close()
+
+        return redirect(url_for('retrieve_contacts'))
+    else:
+        return "Unauthorized"
+
+@app.route('/a-updateContact/<int:id>/', methods=['GET', 'POST'])
+def update_contact(id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+
+        update_contact_form = UpdateContactForm(request.form)
+        if request.method == 'POST' and update_contact_form.validate():
+            db = shelve.open('storage.db', 'w')
+            contacts_dict = db['Contacts']
+
+            contact = contacts_dict.get(id)
+            contact.set_name(update_contact_form.name.data)
+            contact.set_email(update_contact_form.email.data)
+            contact.set_tel(update_contact_form.tel.data)
+            contact.set_msg(update_contact_form.msg.data)
+
+
+            db['Contacts'] = contacts_dict
+            db.close()
+
+            return redirect(url_for('retrieve_contacts'))
+        else:
+            db = shelve.open('storage.db', 'r')
+            contacts_dict = db['Contacts']
+            db.close()
+
+            contact = contacts_dict.get(id)
+            update_contact_form.name.data = contact.get_name()
+            update_contact_form.email.data = contact.get_email()
+            update_contact_form.tel.data = contact.get_tel()
+            update_contact_form.msg.data = contact.get_msg()
+
+            return render_template('updateContact.html', form=update_contact_form)
+    else:
+        return "Unauthorized"
 
 @app.route('/promotions', methods=['GET', 'POST'])
 def promotions():
@@ -1336,10 +1450,107 @@ def retrieve_bookinglogs():
     else:
         return "Unauthorized"
 
+@app.route('/a-deleteBooking/<int:id>', methods=['POST'])
+def delete_booking(id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+
+        db = shelve.open('storage.db', 'w')
+        booking_dict = db['Bookings']
+
+        booking_dict.pop(id)
+
+        db['Bookings'] = booking_dict
+        db.close()
+
+        return redirect(url_for('retrieve_bookings'))
+    else:
+        return "Unauthorized"
+
+@app.route('/a-deleteBookingLog/<int:id>', methods=['POST'])
+def delete_bookinglog(id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+
+        db = shelve.open('storage.db', 'w')
+        bookinglog_dict = db['BookingLogs']
+
+        bookinglog_dict.pop(id)
+
+        db['BookingLogs'] = bookinglog_dict
+        db.close()
+
+        return redirect(url_for('retrieve_bookinglogs'))
+    else:
+        return "Unauthorized"
+
 def sha256(hash_string):
     sha_signature = \
         hashlib.sha256((hash_string+"shho").encode()).hexdigest()
     return sha_signature
+
+@app.route('/a-updateBooking/<int:id>/', methods=['GET', 'POST'])
+def update_booking(id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        update_booking_form = UpdateBookingForm(request.form)
+        if request.method == 'POST' and update_booking_form.validate():
+            db = shelve.open('storage.db', 'w')
+            booking_dict = db['Rooms']
+
+            booking = booking_dict.get(id)
+            booking.set_customer_id(update_booking_form.customerid.data)
+            booking.set_customer_name(update_booking_form.customername.data)
+            booking.set_room_type(update_booking_form.room_type.data)
+            booking.set_startDate(update_booking_form.startdate.data)
+            booking.set_endDate(update_booking_form.enddate.data)
+
+            db['Bookings'] = booking_dict
+            db.close()
+
+            return redirect(url_for('retrieve_bookings'))
+        else:
+            db = shelve.open('storage.db', 'r')
+            booking_dict = db['Bookings']
+            db.close()
+
+            booking = booking_dict.get(id)
+            update_booking_form.customerid.data = booking.get_customer_id()
+            update_booking_form.customername.data = booking.get_customer_name()
+            update_booking_form.room_type.data = booking.get_room_type()
+            update_booking_form.startdate.data = booking.get_startDate()
+            update_booking_form.enddate.data = booking.get_endDate()
+
+            return render_template('updateBooking.html', form=update_booking_form)
+    else:
+        return "Unauthorized"
 
 def loadpromo():
     db = shelve.open('storage.db', 'r')
@@ -1471,7 +1682,6 @@ def confirmdetails():
 
 @app.route('/approve', methods=['POST'])
 def approve():
-    print(request.json)
     return redirect(url_for('success'))
 
 @app.route('/success', methods=['GET'])
@@ -1495,7 +1705,7 @@ def success():
         days = data[2]
         room_type = data[3]
 
-    newbooking = Booking.Booking(userid,room_type,session["login"],startdate,enddate)
+    newbooking = Booking.Booking(userid,room_type,session["login"], datetime.datetime.strptime(startdate, '%d/%m/%y'), datetime.datetime.strptime(enddate,'%d/%m/%y'))
     booking_dict[newbooking.get_booking_id()] = newbooking
     db['Bookings'] = booking_dict
     db.close()
@@ -1620,7 +1830,8 @@ if __name__ == '__main__':
     db["Rooms"] = rooms_dict
     db['ChatLogs'] = {}
     db['TempLogs'] = {}
-    db['Bookings'] = {}
-    db['BookingLogs'] = {}
+    db['Bookings'] = {1:Booking.Booking(1,"Admin1","Studio Mini",datetime.datetime.strptime("12/04/2021","%d/%m/%Y"),datetime.datetime.strptime("14/04/2021","%d/%m/%Y"))}
+    db['BookingLogs'] = {1:BookingLog.BookingLog(1,"Admin1","Studio",datetime.datetime.strptime("11/03/2021","%d/%m/%Y"),datetime.datetime.strptime("12/03/2021","%d/%m/%Y"))}
+    db['Contacts'] = {1:Contact.Contact("Admin","1","email",96322451,"msg")}
     db.close()
     app.run()

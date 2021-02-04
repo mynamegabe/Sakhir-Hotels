@@ -6,5 +6,6 @@
 'Promotion', (15360, 566)
 'ChatLogs', (23552, 6)
 'TempLogs', (24064, 6)
-'Bookings', (24576, 330)
-'BookingLogs', (25088, 6)
+'Bookings', (24576, 297)
+'BookingLogs', (25088, 319)
+'Contacts', (25600, 231)

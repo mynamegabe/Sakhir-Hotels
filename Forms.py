@@ -73,3 +73,16 @@ class CreateRoomForm(Form):
 class CreateTempForm(Form):
     id = IntegerField('User ID',[validators.DataRequired()])
     temperature = DecimalField('Temperature(°C)',places=1)
+
+class UpdateBookingForm(Form):
+    customerid = IntegerField('Customer ID',[validators.DataRequired()])
+    customername = StringField('Customer Name', [validators.Length(min=1, max=150), validators.Optional()])
+    room_type = StringField('Room Type', [validators.Length(min=1, max=150), validators.Optional()])
+    startdate = DateField('Start Date', [validators.DataRequired()], format='%d/%m/%Y')
+    enddate = DateField('End Date', [validators.DataRequired()], format='%d/%m/%Y')
+
+class UpdateContactForm(Form):
+    name = StringField('User Name', [validators.Length(min=1, max=150), validators.Optional()])
+    email = StringField('Email', [validators.Length(min=1, max=150), validators.Optional()])
+    tel = IntegerField('Phone Number', [validators.DataRequired()])
+    msg = StringField('Query', [validators.Length(min=1, max=150), validators.Optional()])

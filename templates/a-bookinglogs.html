@@ -17,8 +17,8 @@
       <tr>
         <th>Booking ID</th>
         <th>Customer ID</th>
-        <th>Room Type</th>
         <th>Customer Name</th>
+        <th>Room Type</th>
         <th>Start Date</th>
         <th>End Date</th>
         <th></th>
@@ -28,7 +28,7 @@
     <tbody>
     {% for bookinglog in bookinglog_list %}
       <tr>
-        <td>{{ bookinglog.get_booking_id() }}</td>
+        <td>{{ bookinglog.get_bookinglog_id() }}</td>
         <td>{{ bookinglog.get_customer_id() }}</td>
         <td>{{ bookinglog.get_customer_name() }}</td>
         <td>{{ bookinglog.get_room_type() }}</td>
@@ -36,8 +36,8 @@
         <td>{{ bookinglog.get_endDate() }}</td>
         <td><a href="/a-updateBookingLog/{{bookinglog.get_bookinglog_id()}}" class="btn btn-warning">Update</a></td>
         <td>
-          <form action="{{url_for('delete_bookinglog', id=booking.get_bookinglog_id())}}" method="POST">
-            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{booking.get_booking_name()}}?');">
+          <form action="{{url_for('delete_bookinglog', id=bookinglog.get_bookinglog_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{bookinglog.get_bookinglog_id()}}?');">
           </form>
         </td>
       </tr>
