@@ -1,13 +1,15 @@
+from datetime import date
 class Review:
     count_id = 0
-    def __init__(self,firstname,lastname,email,rating,title,review):
+    def __init__(self,username,email,rating,title,review):
         Review.count_id += 1
         self.__review_id = Review.count_id
-        self.__name = firstname + lastname
+        self.__name = username
         self.__email = email
         self.__rating = rating
         self.__title = title
         self.__review = review
+        self.__date = date.today().strftime("%d %B %Y")
 
     def get_review_id(self):
         return self.__review_id
@@ -27,6 +29,9 @@ class Review:
     def get_review(self):
         return self.__review
 
+    def get_date(self):
+        return self.__date
+
     def set_review_id(self,review_id):
         self.__review_id = review_id
 
@@ -44,6 +49,3 @@ class Review:
 
     def set_review(self,review):
         self.__review = review
-
-
-

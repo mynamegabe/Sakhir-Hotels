@@ -31,14 +31,62 @@
 
   <div id="reviewbody" class="body">
     <div id="reviewformdiv">
-
+      <h1>Post a review!</h1>
+      {% block reviewform %}
+      <form action="" method="post">
+        {% if user != "None" %}
+        <fieldset>
+          <legend>Username</legend>
+          <input type="text" name="username" value="{{ user.get_username() }}" readonly/>
+        </fieldset>
+        {% else %}
+        <fieldset>
+          <legend>Full Name</legend>
+          <input type="text" name="username"/>
+        </fieldset>
+        {% endif %}
+        <br>
+        <fieldset>
+          <legend>Email</legend>
+          <input type="text" name="email"/>
+        </fieldset>
+        <div id="ratestarbox">
+          <img src="/Images/Icons/emptystar.png" class="ratestars" id="ratestar1" onclick="star(1)"/>
+          <img src="/Images/Icons/emptystar.png" class="ratestars" id="ratestar2" onclick="star(2)"/>
+          <img src="/Images/Icons/emptystar.png" class="ratestars" id="ratestar3" onclick="star(3)"/>
+          <img src="/Images/Icons/emptystar.png" class="ratestars" id="ratestar4" onclick="star(4)"/>
+          <img src="/Images/Icons/emptystar.png" class="ratestars" id="ratestar5" onclick="star(5)"/>
+        </div>
+        <input type="hidden" value="0" id="stars" name="rating"/>
+        <fieldset>
+          <legend>Title</legend>
+          <input type="text" name="title"/>
+        </fieldset>
+        <br>
+        <fieldset>
+          <legend>Body</legend>
+          <textarea name="body" id="reviewtextarea"></textarea>
+        </fieldset>
+        <button type="submit" id="reviewsubmit">Submit</button>
+      </form>
+      {% endblock %}
     </div>
+
     <div id="reviewsmid">
+      <h1>Reviews</h1>
       {% block reviews %}
       {% for review in reviews_list %}
         <div class="reviewbox">
-          <h2>{{ review.get_title() }}</h1>
+          <h1>{{ review.get_title() }}</h1>
+          {% for i in range(review.get_rating())%}
+          <img src="/Images/Icons/star.png" class="ratingstars"/>
+          {% endfor %}
+          {% for i in range(5-review.get_rating())%}
+          <img src="/Images/Icons/emptystar.png" class="ratingstars"/>
+          {% endfor %}
+          <h7>{{ review.get_name() }}</h7>
           <h4>{{ review.get_review() }}</h2>
+          <h6>{{ review.get_date() }}</h6>
         </div>
       {% endfor %}
       {% endblock %}

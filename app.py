@@ -1554,18 +1554,91 @@ def update_booking(id):
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews():
+    db = shelve.open('storage.db', 'r')
+    reviews_dict = db['Reviews']
+    users_dict = db['Users']
+    db.close()
+
+    reviews_list = []
+    for key in reviews_dict:
+        reviews_list.append(reviews_dict.get(key))
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+                user = users_dict[userid]
+        except:
+            user = "None"
     if request.method == "GET":
-        db = shelve.open('storage.db', 'r')
+        return render_template('reviews.html', reviews_list = reviews_list, user=user)
+    elif request.method == "POST":
+        db = shelve.open('storage.db', 'c')
         reviews_dict = db['Reviews']
-        db.close()
+        data = request.form
+        review = Review.Review(data['username'],data['email'],int(data['rating']),data['title'],data['body'])
+        reviews_dict[review.get_review_id()] = review
+        db['Reviews'] = reviews_dict
 
         reviews_list = []
         for key in reviews_dict:
             reviews_list.append(reviews_dict.get(key))
+        db.close()
+        return render_template('reviews.html',reviews_list = reviews_list, user=user)
 
-        return render_template('reviews.html', reviews_list = reviews_list)
-    elif request.method == "POST":
-        print("ok")
+@app.route('/a-reviews')
+def retrieve_reviews():
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'r')
+
+        reviews_dict = db['Reviews']
+
+        db.close()
+
+        reviews_list = []
+        for key in reviews_dict:
+            review = reviews_dict.get(key)
+            reviews_list.append(review)
+
+        return render_template('a-reviews.html', count=len(reviews_list), reviews_list=reviews_list)
+    else:
+        return "Unauthorized"
+
+@app.route('/a-deleteReview/<int:id>', methods=['POST'])
+def delete_review(id):
+
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        reviews_dict = db['Reviews']
+
+        reviews_dict.pop(id)
+
+        db['Reviews'] = reviews_dict
+        db.close()
+
+        return redirect(url_for('retrieve_reviews'))
+    else:
+        return "Unauthorized"
 
 def loadpromo():
     db = shelve.open('storage.db', 'r')
@@ -1848,6 +1921,6 @@ if __name__ == '__main__':
     db['Bookings'] = {1:Booking.Booking(1,"Admin1","Studio Mini",datetime.datetime.strptime("12/04/2021","%d/%m/%Y"),datetime.datetime.strptime("14/04/2021","%d/%m/%Y"))}
     db['BookingLogs'] = {1:BookingLog.BookingLog(1,"Admin1","Studio",datetime.datetime.strptime("11/03/2021","%d/%m/%Y"),datetime.datetime.strptime("12/03/2021","%d/%m/%Y"))}
     db['Contacts'] = {1:Contact.Contact("Admin","1","email",96322451,"msg")}
-    db['Reviews'] = {1:Review.Review("Gabriel","Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool"),2:Review.Review("Gabriel","Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool")}
+    db['Reviews'] = {1:Review.Review("Gabriel Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool"),2:Review.Review("Gabriel Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool")}
     db.close()
     app.run()

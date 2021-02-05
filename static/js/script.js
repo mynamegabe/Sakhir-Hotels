@@ -945,3 +945,13 @@ function closelivechat() {
   $("#livechat").css("cursor","pointer");
   $("#livechatclose").css("display","none");
 }
+
+function star(num) {
+  document.getElementById("stars").value = num;
+  for (i=1;i<num+1;i++) {
+    document.getElementById("ratestar"+String(i)).setAttribute('src','/Images/Icons/star.png')
+  }
+  for (i=num+1;i<6;i++) {
+    document.getElementById("ratestar"+String(i)).setAttribute('src','/Images/Icons/emptystar.png')
+  }
+}

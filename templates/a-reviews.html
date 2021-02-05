@@ -1,0 +1,48 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Reviews</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no reviews.</p>
+  {% elif count == 1 %}
+  <p>There is 1 review.</p>
+  {% else %}
+  <p>There are {{ count }} reviews.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Review ID</th>
+        <th>Username</th>
+        <th>User Email</th>
+        <th>Rating</th>
+        <th>Title</th>
+        <th>Review</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for review in reviews_list %}
+      <tr>
+        <td>{{ review.get_review_id() }}</td>
+        <td>{{ review.get_name() }}</td>
+        <td>{{ review.get_email() }}</td>
+        <td>{{ review.get_rating() }}</td>
+        <td>{{ review.get_title() }}</td>
+        <td>{{ review.get_review() }}</td>
+        <td><a href="/a-updateReview/{{review.get_review_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_review', id=review.get_review_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{review.get_review_id()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
