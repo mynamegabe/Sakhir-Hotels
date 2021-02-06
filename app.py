@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
-from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm
+from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm
 import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableOrderedMultiDict
@@ -1640,6 +1640,54 @@ def delete_review(id):
     else:
         return "Unauthorized"
 
+@app.route('/a-updateReview/<int:id>/', methods=['GET', 'POST'])
+def update_review(id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+
+        update_review_form = UpdateReviewForm(request.form)
+        if request.method == 'POST' and update_review_form.validate():
+            db = shelve.open('storage.db', 'w')
+            reviews_dict = db['Reviews']
+
+            review = reviews_dict.get(id)
+            review.set_name(update_review_form.name.data)
+            review.set_email(update_review_form.email.data)
+            review.set_rating(int(update_review_form.rating.data))
+            review.set_title(update_review_form.title.data)
+            review.set_review(update_review_form.review.data)
+            review.set_date(update_review_form.date.data)
+
+            db['Reviews'] = reviews_dict
+            db.close()
+
+            return redirect(url_for('retrieve_reviews'))
+        else:
+            db = shelve.open('storage.db', 'r')
+            reviews_dict = db['Reviews']
+            db.close()
+
+            review = reviews_dict.get(id)
+            update_review_form.name.data = review.get_name()
+            update_review_form.email.data = review.get_email()
+            update_review_form.rating.data = str(review.get_rating())
+            update_review_form.title.data = review.get_title()
+            update_review_form.review.data = review.get_review()
+            update_review_form.date.data = review.get_date()
+
+            return render_template('updateReview.html', form=update_review_form)
+    else:
+        return "Unauthorized"
+
 def loadpromo():
     db = shelve.open('storage.db', 'r')
 
@@ -1921,6 +1969,6 @@ if __name__ == '__main__':
     db['Bookings'] = {1:Booking.Booking(1,"Admin1","Studio Mini",datetime.datetime.strptime("12/04/2021","%d/%m/%Y"),datetime.datetime.strptime("14/04/2021","%d/%m/%Y"))}
     db['BookingLogs'] = {1:BookingLog.BookingLog(1,"Admin1","Studio",datetime.datetime.strptime("11/03/2021","%d/%m/%Y"),datetime.datetime.strptime("12/03/2021","%d/%m/%Y"))}
     db['Contacts'] = {1:Contact.Contact("Admin","1","email",96322451,"msg")}
-    db['Reviews'] = {1:Review.Review("Gabriel Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool"),2:Review.Review("Gabriel Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool")}
+    db['Reviews'] = {1:Review.Review("Gabriel Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool"),2:Review.Review("John Tan","johntan849@gmail.com",4,"Great service","Customer service was great!")}
     db.close()
     app.run()

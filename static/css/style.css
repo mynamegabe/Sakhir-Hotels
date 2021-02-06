@@ -1477,8 +1477,8 @@ fieldset {
 }
 
 #reviewformdiv {
-  width:50%;
-  min-width:700px;
+  width:auto;
+  padding:20px;
   height:auto;
   background-color:white;
   display:block;
@@ -1487,6 +1487,8 @@ fieldset {
   top:50%;
   transform:translate(-50%,-50%);
   text-align:center;
+  border: 1px solid black;
+  border-radius:20px;
 }
 
 #reviewsmid {
@@ -1503,6 +1505,10 @@ fieldset {
   display:block;
   overflow-y:scroll;
   overflow-x:visible;
+  border: 1px solid black;
+  border-radius:20px;
+  padding:20px;
+  max-height:70%;
 }
 
 .reviewbox {

@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, DecimalField, RadioField, SelectField, TextAreaField, DateField, IntegerField, PasswordField, validators
+from wtforms import Form, StringField, DecimalField, RadioField, SelectField, TextAreaField, DateField, IntegerField, PasswordField, validators, HiddenField
 
 class CreateUserForm(Form):
     first_name = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
@@ -86,3 +86,11 @@ class UpdateContactForm(Form):
     email = StringField('Email', [validators.Length(min=1, max=150), validators.Optional()])
     tel = IntegerField('Phone Number', [validators.DataRequired()])
     msg = StringField('Query', [validators.Length(min=1, max=150), validators.Optional()])
+
+class UpdateReviewForm(Form):
+    name = StringField('User Name', [validators.Length(min=1, max=150), validators.Optional()])
+    email = StringField('Email', [validators.Length(min=1, max=150), validators.Optional()])
+    rating = SelectField('Rating', choices=[("0", 0), ("1", 1), ("2", 2), ("3", 3), ("4", 4), ("5", 5)])
+    title = StringField('Title', [validators.Length(min=1, max=150), validators.Optional()])
+    review = StringField('Review', [validators.Length(min=1, max=150), validators.Optional()])
+    date = DateField('Date', [validators.DataRequired()], format='%d/%m/%Y')

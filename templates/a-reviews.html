@@ -21,6 +21,7 @@
         <th>Rating</th>
         <th>Title</th>
         <th>Review</th>
+        <th>Date</th>
         <th></th>
         <th></th>
       </tr>
@@ -34,6 +35,7 @@
         <td>{{ review.get_rating() }}</td>
         <td>{{ review.get_title() }}</td>
         <td>{{ review.get_review() }}</td>
+        <td>{{ review.get_date() }}</td>
         <td><a href="/a-updateReview/{{review.get_review_id()}}" class="btn btn-warning">Update</a></td>
         <td>
           <form action="{{url_for('delete_review', id=review.get_review_id())}}" method="POST">
