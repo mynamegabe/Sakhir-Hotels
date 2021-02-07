@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm
-import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review
+import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import pytesseract
@@ -1688,6 +1688,39 @@ def update_review(id):
     else:
         return "Unauthorized"
 
+@app.route('/a-restaurants')
+@app.route('/a-restaurants/<name>')
+def retrieve_restaurant(name="None"):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'r')
+
+        restaurants_dict = db['Restaurants']
+
+        db.close()
+
+        restaurants_list = []
+        for key in restaurants_dict:
+            restaurant = restaurants_dict.get(key)
+            restaurants_list.append(restaurant)
+        if name in list(restaurants_dict.keys()):
+            restaurant = restaurants_dict.get(name)
+        else:
+            restaurant = restaurants_dict.get(list(restaurants_dict.keys())[0])
+
+        return render_template('a-restaurants.html', restaurant=restaurant, count=len(restaurants_list), restaurants_list=restaurants_list)
+    else:
+        return "Unauthorized"
+
 def loadpromo():
     db = shelve.open('storage.db', 'r')
 
@@ -1970,5 +2003,13 @@ if __name__ == '__main__':
     db['BookingLogs'] = {1:BookingLog.BookingLog(1,"Admin1","Studio",datetime.datetime.strptime("11/03/2021","%d/%m/%Y"),datetime.datetime.strptime("12/03/2021","%d/%m/%Y"))}
     db['Contacts'] = {1:Contact.Contact("Admin","1","email",96322451,"msg")}
     db['Reviews'] = {1:Review.Review("Gabriel Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool"),2:Review.Review("John Tan","johntan849@gmail.com",4,"Great service","Customer service was great!")}
+
+    restaurant1 = Restaurant.Restaurant("Atlas","Western","A Western cuisine restaurant","FillerOpeningHours","FillerMenu","FillerLunchMenu","FillerDinnerMenu",["Joanne","John"])
+
+    restaurant2 = Restaurant.Restaurant("Arch", "Japanese", "A Japanese cuisine restaurant", "FillerOpeningHours",
+                                        "FillerMenu", "FillerLunchMenu", "FillerDinnerMenu", ["Joanne", "John"])
+
+
+    db['Restaurants'] = {"Atlas":restaurant1,"Arch":restaurant2}
     db.close()
     app.run()

@@ -1,0 +1,64 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Restaurants</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no restaurants.</p>
+  {% elif count == 1 %}
+  <p>There is 1 restaurant.</p>
+  {% else %}
+  <p>There are {{ count }} restaurants.</p>
+  {% endif %}
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        {% for res in restaurants_list %}
+        {% if restaurant.get_name() == res.get_name() %}
+        <li class="nav-item">
+          <a class="nav-link active" href="/a-restaurants/{{ res.get_name() }}">{{ res.get_name() }}</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/a-restaurants/{{ res.get_name() }}">{{ res.get_name() }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Restaurant Name</th>
+        <th>User Email</th>
+        <th>User Phone Number</th>
+        <th>User Query</th>
+        <th>Status</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for contact in contact_list %}
+      <tr>
+        <td>{{ contact.get_contact_id() }}</td>
+        <td>{{ contact.get_name() }}</td>
+        <td>{{ contact.get_email() }}</td>
+        <td>{{ contact.get_tel() }}</td>
+        <td>{{ contact.get_msg() }}</td>
+        <td>{{ contact.get_status() }}</td>
+        <td><a href="/a-updateContact/{{contact.get_contact_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_contact', id=contact.get_contact_id())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{contact.get_contact_id()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

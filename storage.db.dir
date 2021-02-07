@@ -10,3 +10,4 @@
 'BookingLogs', (25088, 319)
 'Contacts', (25600, 230)
 'Reviews', (28672, 464)
+'Restaurants', (29696, 561)
