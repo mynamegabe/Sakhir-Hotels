@@ -1,0 +1,48 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h1 class="display-4">Staff</h1><a href="/a-createStaff" class="btn btn-success">Create Staff</a>
+<div>
+  {% if count == 0 %}
+  <p>There are no staff.</p>
+  {% elif count == 1 %}
+  <p>There is 1 staff.</p>
+  {% else %}
+  <p>There are {{ count }} staff.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Staff ID</th>
+        <th>Name</th>
+        <th>Restaurant</th>
+        <th>Position</th>
+        <th>Salary</th>
+        <th>Birthday</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for staff in staff_list %}
+        <tr>
+          <td>{{ staff.get_staff_id() }}</td>
+          <td>{{ staff.get_staff_name() }}</td>
+          <td>{{ staff.get_restaurant() }}</td>
+          <td>{{ staff.get_position() }}</td>
+          <td>{{ staff.get_salary() }}</td>
+          <td>{{ staff.get_birthday().strftime("%d %B %Y") }}</td>
+          <td><a href="/a-updateStaff/{{staff.get_staff_id()}}" class="btn btn-warning">Update</a></td>
+          <td>
+            <form action="{{url_for('delete_staff', id=staff.get_staff_id())}}" method="POST">
+              <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{staff.get_staff_name()}}?');">
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}

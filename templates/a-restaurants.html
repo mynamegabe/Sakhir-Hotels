@@ -29,6 +29,58 @@
     </div>
   </nav>
 <div>
+  <div id="restaurantdetails">
+    <h1 id="resheader">{{ restaurant.get_name() }}</h1>
+    <h3>{{ restaurant.get_cuisine() }}</h2>
+    <h4>{{ restaurant.get_description() }}</h2>
+    <a href="/a-updateRestaurant/{{restaurant.get_name()}}" id="updateres" class="btn btn-warning">Update</a></td>
+    <form action="{{url_for('delete_restaurant', name=restaurant.get_name())}}" method="POST" id="deleteres">
+      <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{restaurant.get_name()}}?');">
+    </form>
+  </div>
+  <div id="openinghours">
+    <h2 id="resheader">Opening Hours</h2>
+    {% for day in restaurant.get_opening_hours() %}
+      <h4>{{ day }} <span>{{ restaurant.get_opening_hours()[day] }}</span></h4>
+    {% endfor %}
+  </div>
+  <div id="stafflist">
+    <h2>Staff List</h2>
+    <table class="table table-striped" id="resstafflist">
+      <thead>
+        <tr>
+          <th>Staff ID</th>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Salary</th>
+          <th>Birthday</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for staff in staff_list %}
+        <tr>
+          <td>{{ staff.get_staff_id() }}</td>
+          <td>{{ staff.get_staff_name() }}</td>
+          <td>{{ staff.get_position() }}</td>
+          <td>{{ staff.get_salary() }}</td>
+          <td>{{ staff.get_birthday().strftime("%d %B %Y") }}</td>
+          <td><a href="/a-updateStaff/{{staff.get_staff_id()}}" class="btn btn-warning">Update</a></td>
+          <td>
+            <form action="{{url_for('delete_staff', id=staff.get_staff_id())}}" method="POST">
+              <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{staff.get_staff_name()}}?');">
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div>
+
+  </div>
+  <!--
   <table class="table table-striped">
     <thead>
       <tr>
@@ -60,5 +112,6 @@
     {% endfor %}
     </tbody>
   </table>
+-->
 </div>
 {% endblock %}

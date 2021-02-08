@@ -94,3 +94,17 @@ class UpdateReviewForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=150), validators.Optional()])
     review = StringField('Review', [validators.Length(min=1, max=150), validators.Optional()])
     date = DateField('Date', [validators.DataRequired()], format='%d/%m/%Y')
+
+class CreateStaffForm(Form):
+    name = StringField('Name', [validators.Length(min=1, max=150), validators.Optional()])
+    restaurant = StringField('Restaurant', [validators.Length(min=1, max=150), validators.Optional()])
+    position = StringField('Position', [validators.Length(min=1, max=150), validators.Optional()])
+    salary = IntegerField('Salary', [validators.DataRequired()])
+    birthday = DateField('Birthday', [validators.DataRequired()], format='%d/%m/%Y')
+
+class UpdateStaffForm(Form):
+    name = StringField('Name', [validators.Length(min=1, max=150), validators.Optional()])
+    restaurant = StringField('Restaurant', [validators.Length(min=1, max=150), validators.Optional()])
+    position = StringField('Position', [validators.Length(min=1, max=150), validators.Optional()])
+    salary = IntegerField('Salary', [validators.DataRequired()])
+    birthday = DateField('Birthday', [validators.DataRequired()], format='%d/%m/%Y')

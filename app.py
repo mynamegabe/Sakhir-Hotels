@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
-from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm
-import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours
+from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm, CreateStaffForm, UpdateStaffForm
+import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours, Dish, Staff
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import pytesseract
@@ -272,7 +272,6 @@ def retrieve_contacts():
         for key in contacts_dict:
             contact = contacts_dict.get(key)
             contacts_list.append(contact)
-            print(contact)
 
 
         return render_template('a-contacts.html', count=len(contacts_list), contact_list=contacts_list)
@@ -642,7 +641,6 @@ def retrieve_templogs():
         for key in temp_dict:
             temp = temp_dict.get(key)
             temp_list.append(temp)
-            print(temp)
 
         return render_template('templogs.html', count=len(temp_list), temp_list=temp_list)
     else:
@@ -1025,9 +1023,7 @@ def delete_chat(id):
         chat_log = ChatLog.ChatLog(chat.get_name(), chat.get_email(), chat.get_phone(),chat.get_query())
         chat_log.set_status("Complete")
         chatlogs_dict[chat_log.get_chatlog_id()] = chat_log
-        print(chatlogs_dict)
         db['ChatLogs'] = chatlogs_dict
-        print(db['ChatLogs'])
         db.close()
 
         return redirect(url_for('retrieve_chats'))
@@ -1717,9 +1713,187 @@ def retrieve_restaurant(name="None"):
         else:
             restaurant = restaurants_dict.get(list(restaurants_dict.keys())[0])
 
-        return render_template('a-restaurants.html', restaurant=restaurant, count=len(restaurants_list), restaurants_list=restaurants_list)
+        staff_list = []
+        for key in restaurant.get_staff_list():
+            staff = restaurant.get_staff_list().get(key)
+            staff_list.append(staff)
+        return render_template('a-restaurants.html', restaurant=restaurant, count=len(restaurants_list), restaurants_list=restaurants_list, staff_list=staff_list)
     else:
         return "Unauthorized"
+
+@app.route('/a-deleteRestaurant/<name>', methods=['POST'])
+def delete_restaurant(name):
+
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        restaurant_dict = db['Restaurants']
+
+        restaurant_dict.pop(name)
+
+        db['Restaurants'] = restaurant_dict
+        db.close()
+
+        return redirect(url_for('retrieve_restaurant'))
+    else:
+        return "Unauthorized"
+
+
+@app.route('/a-staff')
+def retrieve_staff():
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'r')
+
+        staff_dict = db['Staff']
+
+        db.close()
+
+        staff_list = []
+        for key in staff_dict:
+            staff = staff_dict.get(key)
+            staff_list.append(staff)
+
+        return render_template('a-staff.html', count=len(staff_list), staff_list=staff_list)
+    else:
+        return "Unauthorized"
+
+@app.route('/a-createStaff', methods=['GET', 'POST'])
+def create_staff():
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        create_staff_form = CreateStaffForm(request.form)
+        if request.method == 'POST' and create_staff_form.validate():
+            db = shelve.open('storage.db', 'c')
+            try:
+                staff_dict = db['Staff']
+                restaurant_dict = db['Restaurants']
+            except:
+                print("Error in retrieving Temperature Logs from storage.db.")
+
+            staff = Staff.Staff(create_staff_form.name.data, create_staff_form.restaurant.data, create_staff_form.position.data, create_staff_form.salary.data, create_staff_form.birthday.data)
+            staff_dict[staff.get_staff_id()] = staff
+
+            try:
+                restaurant_dict[staff.get_restaurant()].get_staff_list()[staff.get_staff_name()] = staff
+            except:
+                return "Restaurant not found"
+
+            db['Restaurants'] = restaurant_dict
+            db['Staff'] = staff_dict
+            db.close()
+
+            return redirect(url_for('retrieve_staff'))
+        return render_template('createStaff.html', form=create_staff_form)
+    else:
+        return "Unauthorized"
+
+@app.route('/a-deleteStaff/<int:id>', methods=['POST'])
+def delete_staff(id):
+
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        staff_dict = db['Staff']
+
+        staff_dict.pop(id)
+
+        db['Staff'] = staff_dict
+        db.close()
+
+        return redirect(url_for('retrieve_staff'))
+    else:
+        return "Unauthorized"
+
+@app.route('/a-updateStaff/<int:id>/', methods=['GET', 'POST'])
+def update_staff(id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+
+        update_staff_form = UpdateStaffForm(request.form)
+        if request.method == 'POST' and update_staff_form.validate():
+            db = shelve.open('storage.db', 'w')
+            staff_dict = db['Staff']
+            restaurant_dict = db['Restaurants']
+
+            staff = staff_dict.get(id)
+            staff.set_staff_name(update_staff_form.name.data)
+            if staff.get_restaurant() != update_staff_form.restaurant.data:
+                restaurant_dict[staff.get_restaurant()].get_staff_list().pop(staff.get_staff_id())
+                newres = restaurant_dict[update_staff_form.restaurant.data]
+                newres.get_staff_list()[staff.get_staff_id()] = staff
+                restaurant_dict[update_staff_form.restaurant.data] = newres
+                db['Restaurants'] = restaurant_dict
+            staff.set_restaurant(update_staff_form.restaurant.data)
+            staff.set_position(update_staff_form.position.data)
+            staff.set_salary(update_staff_form.salary.data)
+            staff.set_birthday(update_staff_form.birthday.data)
+
+            db['Staff'] = staff_dict
+            db.close()
+
+            return redirect(url_for('retrieve_staff'))
+        else:
+            db = shelve.open('storage.db', 'r')
+            promo_dict = db['Staff']
+            db.close()
+
+            staff = promo_dict.get(id)
+            update_staff_form.name.data = staff.get_staff_name()
+            update_staff_form.restaurant.data = staff.get_restaurant()
+            update_staff_form.position.data = staff.get_position()
+            update_staff_form.salary.data = staff.get_salary()
+            update_staff_form.birthday.data = staff.get_birthday()
+
+            return render_template('updateStaff.html', form=update_staff_form)
+    else:
+        return "Unauthorized"
+
 
 def loadpromo():
     db = shelve.open('storage.db', 'r')
@@ -1737,7 +1911,6 @@ def loadpromo():
 def initSupport():
     details_form = CreateDetailsForm(request.form)
     chat_form = CreateChatForm(request.form)
-    print(session)
     if request.method == 'POST' and details_form.validate():
         db = shelve.open('storage.db', 'c')
         chats_dict = db['Chats']
@@ -2004,12 +2177,18 @@ if __name__ == '__main__':
     db['Contacts'] = {1:Contact.Contact("Admin","1","email",96322451,"msg")}
     db['Reviews'] = {1:Review.Review("Gabriel Seet","gabeseet@gmail.com",4,"Extremely cool","Very cool"),2:Review.Review("John Tan","johntan849@gmail.com",4,"Great service","Customer service was great!")}
 
-    restaurant1 = Restaurant.Restaurant("Atlas","Western","A Western cuisine restaurant","FillerOpeningHours","FillerMenu","FillerLunchMenu","FillerDinnerMenu",["Joanne","John"])
+    fillerOpeningHours = {"Monday":"11:30 am-9:30 pm","Tuesday":"11:30 am-9:30 pm","Wednesday":"11:30 am-9:30 pm","Thursday":"11:30 am-9:30 pm","Friday":"11:00 am-10:00 pm","Saturday":"11:00 am-10:00 pm","Sunday":"11:30 am-9:30 pm"}
 
-    restaurant2 = Restaurant.Restaurant("Arch", "Japanese", "A Japanese cuisine restaurant", "FillerOpeningHours",
-                                        "FillerMenu", "FillerLunchMenu", "FillerDinnerMenu", ["Joanne", "John"])
+    staff1 = Staff.Staff("Alice Low","Atlas","Head Chef","5490", datetime.datetime.strptime("23/05/2000","%d/%m/%Y"))
+    staff2 = Staff.Staff("Dave Koh", "Arch", "Head Chef", "5490", datetime.datetime.strptime("27/08/1997","%d/%m/%Y"))
+    stafflist1 = {staff1.get_staff_id():staff1}
+    stafflist2 = {staff2.get_staff_id():staff2}
+    restaurant1 = Restaurant.Restaurant("Atlas","Western","A Western cuisine restaurant",fillerOpeningHours,"FillerMenu","FillerLunchMenu","FillerDinnerMenu",stafflist1)
+
+    restaurant2 = Restaurant.Restaurant("Arch", "Japanese", "A Japanese cuisine restaurant", fillerOpeningHours, "FillerMenu", "FillerLunchMenu", "FillerDinnerMenu", stafflist2)
 
 
     db['Restaurants'] = {"Atlas":restaurant1,"Arch":restaurant2}
+    db['Staff'] = {staff1.get_staff_id():staff1,staff2.get_staff_id():staff2}
     db.close()
     app.run()

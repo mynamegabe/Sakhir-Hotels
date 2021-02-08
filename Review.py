@@ -10,7 +10,7 @@ class Review:
         self.__rating = rating
         self.__title = title
         self.__review = review
-        self.__date = datetime.datetime.strptime(date.today().strftime("%d %B %Y"),"%d %B %Y")
+        self.__date = datetime.datetime.strptime(date.today().strftime("%d %B %Y"), "%d %B %Y")
 
     def get_review_id(self):
         return self.__review_id
