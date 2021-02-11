@@ -59,6 +59,16 @@
     </form>
     <br>
   </div>
+
+  <div id="bookinglist">
+    {% block bookings %}
+    <h1>Bookings</h1>
+    {% for booking in booking_list %}
+    <h3>{{ booking.get_room_type() }}</h3>
+    <h4>{{ booking.get_startDate() }} to {{ booking.get_endDate() }}</4>
+    {% endfor %}
+    {% endblock %}
+  </div>
   <!-- - - - - - - - - - - - FOOTER COPY - - - - - - - - - - - -->
   <footer>
     <div id="footerbody">

@@ -15,6 +15,7 @@ class User:
         self.__username = first_name + last_name
         self.__password = password
         self.__swabcheck = swabcheck
+        self.__bookings = []
 
     def get_user_id(self):
         return self.__user_id
@@ -52,6 +53,9 @@ class User:
     def get_swabcheck(self):
         return self.__swabcheck
 
+    def get_bookings(self):
+        return self.__bookings
+
     def set_user_id(self,user_id):
         self.__user_id = user_id
 
@@ -84,3 +88,6 @@ class User:
 
     def set_swabcheck(self, swabcheck):
         self.__swabcheck = swabcheck
+
+    def add_booking(self,bookingid):
+        self.__bookings.append(bookingid)

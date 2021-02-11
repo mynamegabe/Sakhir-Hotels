@@ -397,6 +397,7 @@ def swabtest():
 def profile():
     db = shelve.open('storage.db', 'r')
     users_dict = db['Users']
+    bookings_dict = db['Bookings']
     db.close()
     if request.method == "POST":
         session.pop("login",None)
@@ -405,7 +406,11 @@ def profile():
         if users_dict[i].get_username() == session["login"]:
             userid = users_dict[i].get_user_id()
     user1 = users_dict[userid]
-    return render_template('profile.html',user=user1)
+
+    booking_list = []
+    for booking in user.get_bookings():
+        booking_list.append(bookings_dict[booking])
+    return render_template('profile.html',user=user1, booking_list=booking_list)
 
 @app.route('/resetpw',methods=["POST"])
 def resetpw():
