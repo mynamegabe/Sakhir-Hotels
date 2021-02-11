@@ -27,12 +27,12 @@ def home(booked=""):
         session.pop("Swab",None)
     except:
         print("None")
-    return render_template("home.html",promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"], searchform=dict["search"], rooms=dict["roomlist"], roomcount=roomcount, swab=swab,booked=booked)
+    return render_template("home.html",promo_list=loadpromo(),restaurant_list=loadrestaurants(),form=dict["form"],chat=dict["chat"],support=dict["support"], searchform=dict["search"], rooms=dict["roomlist"], roomcount=roomcount, swab=swab,booked=booked)
 
 @app.route('/rooms', methods=['GET', 'POST'])
 def rooms():
     dict = initSupport()
-    return render_template("rooms.html",promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"])
+    return render_template("rooms.html",promo_list=loadpromo(),restaurant_list=loadrestaurants(),form=dict["form"],chat=dict["chat"],support=dict["support"])
 
 @app.route('/a-rooms', methods=['GET', 'POST'])
 def retrieve_rooms():
@@ -200,7 +200,7 @@ def studio():
         if room.get_category() == "Studio":
             room_list.append(room)
 
-    return render_template('studio.html',promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"],rooms=room_list)
+    return render_template('studio.html',promo_list=loadpromo(),restaurant_list=loadrestaurants(),form=dict["form"],chat=dict["chat"],support=dict["support"],rooms=room_list)
 
 @app.route('/rooms/regular-rooms', methods=['GET', 'POST'])
 def regular():
@@ -215,7 +215,7 @@ def regular():
         if room.get_category() == "Regular":
             room_list.append(room)
 
-    return render_template('regular.html',promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"],rooms=room_list)
+    return render_template('regular.html',promo_list=loadpromo(),restaurant_list=loadrestaurants(),form=dict["form"],chat=dict["chat"],support=dict["support"],rooms=room_list)
 
 @app.route('/rooms/suites', methods=['GET', 'POST'])
 def suites():
@@ -230,7 +230,7 @@ def suites():
         if room.get_category() == "Suite":
             room_list.append(room)
 
-    return render_template('suites.html',promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"],rooms=room_list)
+    return render_template('suites.html',promo_list=loadpromo(),restaurant_list=loadrestaurants(),form=dict["form"],chat=dict["chat"],support=dict["support"],rooms=room_list)
 
 @app.route('/contactUs', methods=['GET', 'POST'])
 def contact_us():
@@ -247,10 +247,10 @@ def contact_us():
         contact_dict[contact.get_contact_id()] = contact
         db['Contacts'] = contact_dict
         dict = initSupport()
-        return render_template('contact.html', promo_list=loadpromo(), form=dict["form"], chat=dict["chat"],support=dict["support"])
+        return render_template('contact.html', promo_list=loadpromo(),restaurant_list=loadrestaurants(), form=dict["form"], chat=dict["chat"],support=dict["support"])
     else:
         dict = initSupport()
-        return render_template('contact.html',promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"])
+        return render_template('contact.html',promo_list=loadpromo(),restaurant_list=loadrestaurants(),form=dict["form"],chat=dict["chat"],support=dict["support"])
 
 @app.route('/a-contacts', methods=['GET'])
 def retrieve_contacts():
@@ -1684,6 +1684,25 @@ def update_review(id):
             return render_template('updateReview.html', form=update_review_form)
     else:
         return "Unauthorized"
+
+@app.route('/restaurants/<name>',methods=['GET','POST'])
+def restaurant(name):
+    db = shelve.open('storage.db', 'r')
+    restaurants_dict = db['Restaurants']
+    db.close()
+    restaurant = restaurants_dict[name]
+    return render_template('restaurant.html',restaurant=restaurant)
+
+def loadrestaurants():
+    db = shelve.open('storage.db', 'r')
+    restaurant_dict = db['Restaurants']
+    db.close()
+
+    restaurant_list = []
+    for key in restaurant_dict:
+        restaurant = restaurant_dict.get(key)
+        restaurant_list.append(restaurant)
+    return restaurant_list
 
 @app.route('/a-restaurants')
 @app.route('/a-restaurants/<name>')

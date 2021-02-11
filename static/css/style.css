@@ -1586,3 +1586,22 @@ fieldset {
   cursor:grab;
   outline:none;
 }
+
+
+#restaurantdetails {
+  background-color:white;
+  border-radius:20px;
+  width:40%;
+  position:absolute;
+  left:50%;
+  top:70%;
+  transform:translate(-50%,-50%);
+}
+
+#restaurantdetails h1,#restaurantdetails h2,#restaurantdetails h3,#restaurantdetails h4 {
+  display:inline-block;
+}
+
+#restaurantdetails div {
+  display:inline-block;
+}
