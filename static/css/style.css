@@ -134,6 +134,19 @@ h1,h2 {
   overflow:hidden;
 }
 
+#restaurantsmenu {
+  width:100vw;
+  background-color:white;
+  height:0px;
+  position:fixed;
+  top:85px;
+  left:410px;
+  z-index:2;
+  transition:height 0.5s, filter 0.5s;
+  overflow:hidden;
+}
+
+
 #mainprod {
   width:250px;
   height:100%;
@@ -1566,8 +1579,8 @@ fieldset {
 
 .ratestars {
   width:50px;
+  cursor:pointer;
 }
-
 #reviewsubmit {
   font-size:20px;
   color:white;
@@ -1596,6 +1609,7 @@ fieldset {
   left:50%;
   top:70%;
   transform:translate(-50%,-50%);
+  margin-bottom:100px;
 }
 
 #restaurantdetails h1,#restaurantdetails h2,#restaurantdetails h3,#restaurantdetails h4 {
@@ -1604,4 +1618,8 @@ fieldset {
 
 #restaurantdetails div {
   display:inline-block;
+}
+
+.restaurantbody {
+height:130vh !important;
 }

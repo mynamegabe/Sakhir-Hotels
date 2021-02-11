@@ -3,6 +3,7 @@
   <a href="#"><li id="home">Home</li></a>
   <a href="/rooms"><li id="products">Rooms</li></a>
   <a href="/promotions"><li id="promotions">Promotions</li></a>
+  <a href="#"><li id="restaurants">Restaurants</li></a>
   <a href="/reviews"><li id="reviews">Reviews</li></a>
 </ul>
 
@@ -69,4 +70,19 @@
     <a href="/promotions/dbs-card-promotion"><li class="mainprodbutton">DBS Card Promotion</li></a>
     <a href="/promotions/family-deals"><li class="mainprodbutton">Family Deals</li></a>
   -->
+</div>
+</div>
+
+<div id="restaurantsmenu" class="navbarmenus">
+<div id="mainprod">
+  <ul>
+    {% for restaurant in restaurant_list %}
+      <a href="/restaurants/{{restaurant.get_name()}}"><li class="mainprodbutton">{{restaurant.get_name()}}</li></a>
+    {% endfor %}
+    <!--
+    <a href="/promotions/christmas-deals"><li class="mainprodbutton">Christmas Deals</li></a>
+    <a href="/promotions/dbs-card-promotion"><li class="mainprodbutton">DBS Card Promotion</li></a>
+    <a href="/promotions/family-deals"><li class="mainprodbutton">Family Deals</li></a>
+  -->
+</div>
 </div>

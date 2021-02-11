@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
+from flask import Flask, Response, render_template, request, redirect, url_for, session, send_from_directory
 from Forms import CreateDishForm, CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm, CreateStaffForm, UpdateStaffForm, UpdateRestaurantForm
-import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours, Dish, Staff
+import datetime, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours, Dish, Staff
 from werkzeug.utils import secure_filename
-from werkzeug.datastructures import ImmutableOrderedMultiDict
+from authy.api import AuthyApiClient
 import pytesseract
 from PIL import Image
 from re import search
@@ -11,6 +11,8 @@ from ast import literal_eval
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 app = Flask(__name__, static_url_path='',static_folder='static')
 app.secret_key = "fiegclub"
+app.config.from_object('config')
+api = AuthyApiClient(app.config['AUTHY_API_KEY'])
 
 @app.route('/', methods=['GET', 'POST'])
 def home(booked=""):
@@ -48,7 +50,6 @@ def retrieve_rooms():
             return "Not logged in"
     if users_dict[userid].get_membership() == "A" and session["auth"] == True:
 
-        room_dict = {}
         db = shelve.open('storage.db', 'r')
         room_dict = db['Rooms']
         db.close()
@@ -353,7 +354,7 @@ def update_contact(id):
 @app.route('/promotions', methods=['GET', 'POST'])
 def promotions():
     dict = initSupport()
-    return render_template('promotions.html',promo_list=loadpromo(),form=dict["form"],chat=dict["chat"],support=dict["support"])
+    return render_template('promotions.html',promo_list=loadpromo(),restaurant_list=loadrestaurants(),form=dict["form"],chat=dict["chat"],support=dict["support"])
 
 @app.route('/promotion/<cn>', methods=['GET', 'POST'])
 def promotion(cn):
@@ -479,6 +480,7 @@ def create_user():
                 print("Error in retrieving Users from storage.db.")
 
             user = User.User(create_user_form.first_name.data, create_user_form.last_name.data,
+                             create_user_form.birthdate.data, create_user_form.countrycode.data, create_user_form.phonenumber.data,
                              create_user_form.gender.data, create_user_form.membership.data,
                              create_user_form.remarks.data, create_user_form.pw.data, "Unverified")
             users_dict[user.get_user_id()] = user
@@ -1208,23 +1210,55 @@ def login():
 def signUp():
     create_signup_form = CreateSignupForm(request.form)
     if request.method == 'POST' and create_signup_form.validate():
-        users_dict = {}
-        db = shelve.open('storage.db', 'c')
-
-        try:
-            users_dict = db['Users']
-        except:
-            print("Error in retrieving Users from storage.db.")
-
-        user = User.User(create_signup_form.first_name.data, create_signup_form.last_name.data, create_signup_form.gender.data, create_signup_form.birthdate.data, "C", "",sha256(create_signup_form.pw.data),"Unverified")
-        users_dict[user.get_user_id()] = user
-        db['Users'] = users_dict
-
-        db.close()
-
-        session["login"] = user.get_username()
-        return redirect(url_for('home'))
+        country_code = request.form.get("country_code")
+        phone_number = create_signup_form.phonenumber.data
+        session['first_name'] = create_signup_form.first_name.data
+        session['last_name'] = create_signup_form.last_name.data
+        session['gender'] = create_signup_form.gender.data
+        session['birthdate'] = create_signup_form.birthdate.data
+        session['country_code'] = country_code
+        session['phone_number'] = phone_number
+        session['password'] = create_signup_form.pw.data
+        api.phones.verification_start(phone_number, country_code, via='sms')
+        return redirect(url_for("verify"))
     return render_template('signup.html', form=create_signup_form)
+
+@app.route("/verify", methods=["GET", "POST"])
+def verify():
+    if request.method == "POST":
+        token = request.form.get("token")
+
+        phone_number = session.get("phone_number")
+        country_code = session.get("country_code")
+
+        verification = api.phones.verification_check(phone_number,
+                                                     country_code,
+                                                     token)
+
+        if verification.ok():
+            db = shelve.open('storage.db', 'c')
+
+            try:
+                users_dict = db['Users']
+            except:
+
+                print("Error in retrieving Users from storage.db.")
+            user = User.User(session.get("first_name"), session.get("last_name"),
+                             session.get("gender"),
+                             session.get("birthdate"), session.get("country_code"),
+                             session.get("phone_number"), "C", "", sha256(session.get("password")),
+                             "Unverified")
+            users_dict[user.get_user_id()] = user
+            db['Users'] = users_dict
+
+            db.close()
+
+            session["login"] = user.get_username()
+            return redirect(url_for('home'))
+        else:
+            return "Nope"
+
+    return render_template("verify.html")
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -1691,7 +1725,7 @@ def restaurant(name):
     restaurants_dict = db['Restaurants']
     db.close()
     restaurant = restaurants_dict[name]
-    return render_template('restaurant.html',restaurant=restaurant)
+    return render_template('restaurant.html',restaurant=restaurant,restaurant_list=loadrestaurants())
 
 def loadrestaurants():
     db = shelve.open('storage.db', 'r')
@@ -1702,6 +1736,7 @@ def loadrestaurants():
     for key in restaurant_dict:
         restaurant = restaurant_dict.get(key)
         restaurant_list.append(restaurant)
+    print(restaurant_list)
     return restaurant_list
 
 @app.route('/a-restaurants')
@@ -2235,9 +2270,9 @@ if __name__ == '__main__':
 
     #Test user and promo
 
-    user = User.User("Admin", "1", "M", "28/09/2003", "A", "", sha256("hello"+"shho"), "Negative")
+    user = User.User("Admin", "1", "M", "28/09/2003", "65", "96322451", "A", "", sha256("hello"+"shho"), "Negative")
     users_dict[user.get_user_id()] = user
-    user1 = User.User("Karen", "1", "F", "28/09/2003", "C", "", sha256("hello"+"shho"), "Negative")
+    user1 = User.User("Karen", "1", "F", "28/09/2003", "65", "96322451", "C", "", sha256("hello"+"shho"), "Negative")
     users_dict[user1.get_user_id()] = user1
 
     promo_dict = {}

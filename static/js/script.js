@@ -108,6 +108,30 @@ $(document).ready(function(){
     //$("#navbarlist li").css("color", "#464446");
   });
 
+   var restmenuheight = String(document.querySelector('#restaurantsmenu > #mainprod > ul').childElementCount * 45) + "px";
+
+   $("#restaurants").hover(function(){
+    $(this).css("border-bottom", "2px solid red");
+    $("#restaurantsmenu").css("height", restmenuheight);
+    $("#navbar").css("background-color", "white");
+    }, function(){
+    $(this).css("border-bottom", "0px solid red");
+    $("#restaurantsmenu").css("height", "0px");
+    $("#navbar").css("background-color", "white");
+    //$("#navbarlist li").css("color", "#464446");
+  });
+
+  $("#restaurantsmenu").hover(function(){
+    $("#restaurants").css("border-bottom", "2px solid red");
+    $("#restaurantsmenu").css("height", restmenuheight);
+    $("#navbar").css("background-color", "white");
+    }, function(){
+    $("#restaurants").css("border-bottom", "0px solid red");
+    $("#restaurantsmenu").css("height", "0px");
+    $("#navbar").css("background-color", "white");
+    //$("#navbarlist li").css("color", "#464446");
+  });
+
   /*var indmenuheight = String(document.querySelector('#roomsmenu > #mainprod > ul').childElementCount * 45) + "px";
 
   $("#rooms").hover(function(){
@@ -153,27 +177,6 @@ $(document).ready(function(){
     $("#navbar").css("background-color", "white");
   });
 
-  var resmenuheight = String(document.querySelector('#newsmenu > #mainprod > ul').childElementCount * 45) + "px";
-
-  $("#news").hover(function(){
-    $(this).css("border-bottom", "2px solid red");
-    $("#newsmenu").css("height", resmenuheight);
-    $("#navbar").css("background-color", "white");
-    }, function(){
-    $(this).css("border-bottom", "0px solid red");
-    $("#newsmenu").css("height", "0px");
-    $("#navbar").css("background-color", "white");
-  });
-
-  $("#newsmenu").hover(function(){
-    $("#news").css("border-bottom", "2px solid red");
-    $("#newsmenu").css("height", resmenuheight);
-    $("#navbar").css("background-color", "white");
-    }, function(){
-    $("#news").css("border-bottom", "0px solid red");
-    $("#newsmenu").css("height", "0px");
-    $("#navbar").css("background-color", "white");
-  });
 /*------------Studio----------------*/
   $("#studiobutton").hover(function(){
     $("#studiosub").css("width","300px");

@@ -4,6 +4,9 @@ class CreateUserForm(Form):
     first_name = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     last_name = StringField('Last Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     gender = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('F', 'Female'), ('M', 'Male')], default='')
+    birthdate = DateField('Birthdate', [validators.DataRequired()], format='%d/%m/%Y')
+    countrycode = IntegerField('Country Code', [validators.NumberRange(min=0, max=999),validators.DataRequired()])
+    phonenumber = IntegerField('Phone Number', [validators.NumberRange(min=10000000, max=999999999),validators.DataRequired()])
     membership = RadioField('Membership', choices=[('C', 'Customer'), ('M', 'Member'), ('A', 'Admin')], default='C')
     remarks = TextAreaField('Remarks', [validators.Optional()])
     pw = StringField('Change Password', [validators.Length(min=1, max=150), validators.Optional()])
@@ -18,6 +21,7 @@ class CreateSignupForm(Form):
     first_name = StringField('', [validators.Length(min=1, max=150), validators.DataRequired()])
     last_name = StringField('', [validators.Length(min=1, max=150), validators.DataRequired()])
     gender = SelectField('', [validators.DataRequired()],choices=[('', 'Select'), ('F', 'Female'), ('M', 'Male')], default='')
+    phonenumber = StringField('', [validators.DataRequired()])
     birthdate = DateField('', [validators.DataRequired()], format='%d/%m/%Y')
     pw = PasswordField('', [validators.Length(min=1, max=150), validators.DataRequired()])
 
