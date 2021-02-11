@@ -108,3 +108,19 @@ class UpdateStaffForm(Form):
     position = StringField('Position', [validators.Length(min=1, max=150), validators.Optional()])
     salary = IntegerField('Salary', [validators.DataRequired()])
     birthday = DateField('Birthday', [validators.DataRequired()], format='%d/%m/%Y')
+
+class UpdateRestaurantForm(Form):
+    name = StringField('Restaurant Name', [validators.Length(min=1, max=150), validators.Optional()])
+    cuisine = StringField('Cuisine', [validators.Length(min=1, max=150), validators.Optional()])
+    description = StringField('Description', [validators.Length(min=1, max=150), validators.Optional()])
+    opening_hours = StringField('Opening Hours', [validators.Length(min=1, max=300), validators.Optional()])
+
+class CreateDishForm(Form):
+    name = StringField('Dish Name', [validators.Length(min=1, max=150), validators.Optional()])
+    description = StringField('Description', [validators.Length(min=1, max=150), validators.Optional()])
+    price = IntegerField('Price', [validators.DataRequired()])
+
+class UpdateDishForm(Form):
+    name = StringField('Dish Name', [validators.Length(min=1, max=150), validators.Optional()])
+    description = StringField('Description', [validators.Length(min=1, max=150), validators.Optional()])
+    price = IntegerField('Price', [validators.DataRequired()])

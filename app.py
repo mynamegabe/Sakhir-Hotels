@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
-from Forms import CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm, CreateStaffForm, UpdateStaffForm
+from Forms import CreateDishForm, CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm, CreateStaffForm, UpdateStaffForm, UpdateRestaurantForm
 import datetime, cgi, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours, Dish, Staff
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableOrderedMultiDict
 import pytesseract
 from PIL import Image
 from re import search
+from ast import literal_eval
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 app = Flask(__name__, static_url_path='',static_folder='static')
@@ -1721,6 +1722,158 @@ def retrieve_restaurant(name="None"):
     else:
         return "Unauthorized"
 
+@app.route('/a-updateRestaurant/<name>/', methods=['GET', 'POST'])
+def update_restaurant(name):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        update_restaurant_form = UpdateRestaurantForm(request.form)
+        if request.method == 'POST' and update_restaurant_form.validate():
+            db = shelve.open('storage.db', 'w')
+            restaurant_dict = db['Restaurants']
+
+            restaurant = restaurant_dict.get(name)
+            restaurant.set_name(update_restaurant_form.name.data)
+            restaurant.set_cuisine(update_restaurant_form.cuisine.data)
+            restaurant.set_description(update_restaurant_form.description.data)
+            restaurant.set_opening_hours(literal_eval(update_restaurant_form.opening_hours.data))
+
+            db['Restaurants'] = restaurant_dict
+            db.close()
+
+            return redirect(url_for('retrieve_restaurant'))
+        else:
+            db = shelve.open('storage.db', 'r')
+            restaurant_dict = db['Restaurants']
+            db.close()
+
+            restaurant = restaurant_dict.get(name)
+            update_restaurant_form.name.data = restaurant.get_name()
+            update_restaurant_form.cuisine.data = restaurant.get_cuisine()
+            update_restaurant_form.description.data = restaurant.get_description()
+            update_restaurant_form.opening_hours.data = restaurant.get_opening_hours()
+
+            return render_template('updateRestaurant.html', form=update_restaurant_form)
+    else:
+        return "Unauthorized"
+
+
+@app.route('/a-restaurants/<name>/a-createDish', methods=['GET', 'POST'])
+def create_dish(name):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        create_dish_form = CreateDishForm(request.form)
+        if request.method == 'POST' and create_dish_form.validate():
+            db = shelve.open('storage.db', 'c')
+
+            try:
+                restaurant_dict = db['Restaurants']
+            except:
+                print("Error in retrieving Rooms from storage.db.")
+
+            menu = restaurant_dict[name].get_menu()
+
+            dish = Dish.Dish(create_dish_form.name.data, create_dish_form.description.data, create_dish_form.price.data,)
+            menu[dish.get_dish_id()] = dish
+            restaurant_dict[name].set_menu(menu)
+            db['Restaurants'] = restaurant_dict
+
+            db.close()
+
+            return redirect(url_for('retrieve_restaurant'))
+        return render_template('createDish.html', form=create_dish_form)
+    else:
+        return "Unauthorized"
+
+@app.route('/a-restaurants/<name>/a-deleteDish/<int:id>', methods=['POST'])
+def delete_dish(name,id):
+
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        restaurant_dict = db['Restaurants']
+        menu = restaurant_dict[name].get_menu()
+        menu.pop(id)
+        restaurant_dict[name].set_menu(menu)
+        db['Restaurants'] = restaurant_dict
+        db.close()
+
+        return redirect(url_for('retrieve_restaurant'))
+    else:
+        return "Unauthorized"
+
+@app.route('/a-restaurants/<name>/a-updateDish/<int:id>/', methods=['GET', 'POST'])
+def update_dish(name,id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+
+        update_dish_form = CreateDishForm(request.form)
+        if request.method == 'POST' and update_dish_form.validate():
+            db = shelve.open('storage.db', 'w')
+            restaurant_dict = db['Restaurants']
+            menu = restaurant_dict[name].get_menu()
+
+            dish = menu.get(id)
+            dish.set_name(update_dish_form.name.data)
+            dish.set_description(update_dish_form.description.data)
+            dish.set_price(update_dish_form.price.data)
+
+            menu[id] = dish
+            restaurant_dict[name].set_menu(menu)
+            db['Restaurants'] = restaurant_dict
+            db.close()
+
+            return redirect(url_for('retrieve_restaurant'))
+        else:
+            db = shelve.open('storage.db', 'r')
+            restaurant_dict = db['Restaurants']
+            db.close()
+            menu = restaurant_dict[name].get_menu()
+            dish = menu.get(id)
+            update_dish_form.name.data = dish.get_name()
+            update_dish_form.description.data = dish.get_description()
+            update_dish_form.price.data = dish.get_price()
+
+            return render_template('updateDish.html', form=update_dish_form)
+    else:
+        return "Unauthorized"
+
+
 @app.route('/a-deleteRestaurant/<name>', methods=['POST'])
 def delete_restaurant(name):
 
@@ -2183,9 +2336,11 @@ if __name__ == '__main__':
     staff2 = Staff.Staff("Dave Koh", "Arch", "Head Chef", "5490", datetime.datetime.strptime("27/08/1997","%d/%m/%Y"))
     stafflist1 = {staff1.get_staff_id():staff1}
     stafflist2 = {staff2.get_staff_id():staff2}
-    restaurant1 = Restaurant.Restaurant("Atlas","Western","A Western cuisine restaurant",fillerOpeningHours,"FillerMenu","FillerLunchMenu","FillerDinnerMenu",stafflist1)
+    menu1 = {1:Dish.Dish("Fish N Chips","Fried cod with a side of chips and tartar sauce","10"), 2:Dish.Dish("Spam Musubi","Fried spam on top of Japanese rice wrapped with seaweed","6")}
+    menu2 = {1: Dish.Dish("Teriyaki Chicken Don", "Japanese rice and fried chicken slices with teriyaki sauce drizzled over", "12"), 2: Dish.Dish("Assorted Yakitori", "A variety of styles of cooking and seasoning with chicken and pork on skewers", "15")}
+    restaurant1 = Restaurant.Restaurant("Atlas","Western","A Western cuisine restaurant",fillerOpeningHours,menu1,menu1,menu1,stafflist1)
 
-    restaurant2 = Restaurant.Restaurant("Arch", "Japanese", "A Japanese cuisine restaurant", fillerOpeningHours, "FillerMenu", "FillerLunchMenu", "FillerDinnerMenu", stafflist2)
+    restaurant2 = Restaurant.Restaurant("Arch", "Japanese", "A Japanese cuisine restaurant", fillerOpeningHours, menu2, menu2, menu2, stafflist2)
 
 
     db['Restaurants'] = {"Atlas":restaurant1,"Arch":restaurant2}

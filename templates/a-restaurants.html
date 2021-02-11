@@ -77,8 +77,18 @@
       </tbody>
     </table>
   </div>
-  <div>
-
+  <div id="menu">
+    <h2 id="resheader">Menu</h2>
+    <a href="/a-restaurants/{{restaurant.get_name()}}/a-createDish" class="btn btn-success">Create Dish</a>
+    <br>
+    {% for dish in restaurant.get_menu() %}
+      <h4>{{ restaurant.get_menu()[dish].get_name() }} <span>{{ restaurant.get_menu()[dish].get_description() }} ${{ restaurant.get_menu()[dish].get_price() }}</span></h4>
+      <a href="/a-restaurants/{{restaurant.get_name()}}/a-updateDish/{{restaurant.get_menu()[dish].get_dish_id()}}" class="btn btn-warning">U</a>
+      <form action="/a-restaurants/{{restaurant.get_name()}}/a-deleteDish/{{restaurant.get_menu()[dish].get_dish_id()}}" method="POST">
+        <input type="submit" value="-" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{restaurant.get_menu()[dish].get_name()}}?');">
+      </form>
+      <br>
+    {% endfor %}
   </div>
   <!--
   <table class="table table-striped">

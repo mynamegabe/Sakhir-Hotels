@@ -282,7 +282,36 @@ a.article:hover {
   width:calc(100% - 450px);
 }
 
+#menu {
+  width:auto;
+  height:auto;
+  background-color:#7c8fdb;
+  border-radius:20px;
+  padding:20px;
+  margin-top:20px;
+  display:inline-block;
+  vertical-align:top;
+}
 
+#menu h4 {
+  color:white;
+}
+
+#menu span {
+  font-size:15px;
+  color:black;
+}
+
+#menu #resheader {
+  display:inline-block;
+}
+#menu h4{
+  display:inline-block;
+}
+
+#menu form{
+  displaY:inline-block;
+}
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
