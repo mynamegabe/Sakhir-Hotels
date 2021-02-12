@@ -38,11 +38,13 @@ class GraphPoints:
     def increment_point(self,value=1):
         today = date.today()
         olddate = self.__xpoints[-1]
-        if today == olddate:
+        delta = today - olddate
+        print(delta.days)
+        if delta.days == 0:
             self.__ypoints[-1] += value
         else:
             delta = today - olddate
-            for i in range(delta.days + 1):
+            for i in range(delta.days - 1):
                 day = olddate + timedelta(days=i)
                 self.__xpoints.append(day)
                 self.__ypoints.append(0)

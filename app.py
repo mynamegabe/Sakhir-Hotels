@@ -1752,6 +1752,9 @@ def order(name):
         restaurant.set_order_list(order_list)
         restaurants_dict[name] = restaurant
         db['Restaurants'] = restaurants_dict
+        ordergraph = db['OrderGraph']
+        ordergraph.increment_point()
+        db['OrderGraph'] = ordergraph
         return redirect(url_for('restaurant',name=name))
     else:
         db = shelve.open('storage.db', 'r')
@@ -2469,6 +2472,8 @@ def create_order_figure():
     for i in prixs:
         xs.append(i.strftime("%d/%m/%Y"))
     ys = graphobj.get_ypoints()
+    print(xs)
+    print(ys)
     axis.plot(xs, ys)
     return fig
 
@@ -2612,9 +2617,14 @@ if __name__ == '__main__':
     db['Restaurants'] = {"Atlas":restaurant1,"Arch":restaurant2}
     db['Staff'] = {staff1.get_staff_id():staff1,staff2.get_staff_id():staff2}
 
-    bookinggraph = GraphPoints.GraphPoints('BookingGraph',"Time","Bookings")
+    bookinggraph = GraphPoints.GraphPoints('Booking Graph',"Time","Bookings")
     bookinggraph.set_ypoints([0,1,3,0,1])
-    bookinggraph.set_xpoints([date(2021, 1, 13), date(2021, 1, 14), date(2021, 1, 15), date(2021, 1, 16), date(2021, 1, 17)])
+    bookinggraph.set_xpoints([date(2021, 2, 8), date(2021, 2, 9), date(2021, 2, 10), date(2021, 2, 11), date(2021, 2, 12)])
     db['BookingGraph'] = bookinggraph
+
+    ordergraph = GraphPoints.GraphPoints('Order Graph', "Time", "Orders")
+    ordergraph.set_ypoints([54, 47, 39, 59, 44])
+    ordergraph.set_xpoints([date(2021, 2, 8), date(2021, 2, 9), date(2021, 2, 10), date(2021, 2, 11), date(2021, 2, 12)])
+    db['OrderGraph'] = ordergraph
     db.close()
     app.run()
