@@ -1,3 +1,4 @@
+import random
 class Booking:
     count_id = 0
 
@@ -9,6 +10,9 @@ class Booking:
         self.__room_type = room_type
         self.__startDate = startDate
         self.__endDate = endDate
+        num = str(random.randint(0,100))
+        num = (3 - len(num)) * "0" + num
+        self.__room_number = str(random.randint(1,10)) + "-" + num
 
     def get_booking_id(self):
         return self.__booking_id

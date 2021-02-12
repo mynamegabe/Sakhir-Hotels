@@ -90,38 +90,71 @@
       <br>
     {% endfor %}
   </div>
-  <!--
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Restaurant Name</th>
-        <th>User Email</th>
-        <th>User Phone Number</th>
-        <th>User Query</th>
-        <th>Status</th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for contact in contact_list %}
-      <tr>
-        <td>{{ contact.get_contact_id() }}</td>
-        <td>{{ contact.get_name() }}</td>
-        <td>{{ contact.get_email() }}</td>
-        <td>{{ contact.get_tel() }}</td>
-        <td>{{ contact.get_msg() }}</td>
-        <td>{{ contact.get_status() }}</td>
-        <td><a href="/a-updateContact/{{contact.get_contact_id()}}" class="btn btn-warning">Update</a></td>
-        <td>
-          <form action="{{url_for('delete_contact', id=contact.get_contact_id())}}" method="POST">
-            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{contact.get_contact_id()}}?');">
-          </form>
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
--->
+  <br>
+  <br>
+  <div id="orderlist">
+    <h2>Order List</h2>
+    <table class="table table-striped" id="resstafflist">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Dish</th>
+          <th>Room Number</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for order in order_list %}
+        <tr>
+          <td>{{ order.get_order_id() }}</td>
+          <td>{{ order.get_dish() }}</td>
+          <td>{{ order.get_roomno() }}</td>
+          <td><a href="/a-updateOrder/{{restaurant.get_name()}}/a-updateOrder/{{order.get_order_id()}}" class="btn btn-warning">Update</a></td>
+          <td>
+            <form action="/a-restaurants/{{restaurant.get_name()}}/a-deleteOrder/{{order.get_order_id()}}" method="POST">
+              <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{order.get_order_id()}}?');">
+            </form>
+          </td>
+          <td>
+            <form action="/a-restaurants/{{restaurant.get_name()}}/a-completeOrder/{{order.get_order_id()}}" method="POST">
+              <input type="submit" value="&#10003;" class="btn btn-success">
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <div id="orderlist">
+    <h2>Order Logs</h2>
+    <table class="table table-striped" id="resstafflist">
+      <thead>
+        <tr>
+          <th>Order Log ID</th>
+          <th>Dish</th>
+          <th>Room Number</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for order in orderlog_list %}
+        <tr>
+          <td>{{ order.get_order_id() }}</td>
+          <td>{{ order.get_dish() }}</td>
+          <td>{{ order.get_roomno() }}</td>
+          <td>
+            <form action="/a-restaurants/{{restaurant.get_name()}}/a-deleteOrderLog/{{order.get_order_id()}}" method="POST">
+              <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{order.get_order_id()}}?');">
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
 </div>
 {% endblock %}

@@ -128,3 +128,7 @@ class UpdateDishForm(Form):
     name = StringField('Dish Name', [validators.Length(min=1, max=150), validators.Optional()])
     description = StringField('Description', [validators.Length(min=1, max=150), validators.Optional()])
     price = IntegerField('Price', [validators.DataRequired()])
+
+class OrderDishForm(Form):
+    name = SelectField('', [validators.Length(min=1, max=150), validators.Optional()])
+    roomno = StringField('', [validators.Length(min=1, max=150), validators.Optional()])

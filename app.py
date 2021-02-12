@@ -1,13 +1,12 @@
-from flask import Flask, Response, render_template, request, redirect, url_for, session, send_from_directory
-from Forms import CreateDishForm, CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm, CreateStaffForm, UpdateStaffForm, UpdateRestaurantForm
-import datetime, hashlib, requests, shelve, os, User, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours, Dish, Staff
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
+from Forms import CreateDishForm, OrderDishForm, CreateUserForm, CreatePromoForm, CreateTempForm, CreateSignupForm, CreateLoginForm, CreateRoomSearchForm, CreateUserSearchForm, CreateChatForm, CreateDetailsForm, CreateUpdateDetailsForm, CreateSwabForm, CreateUpdateSwabForm, CreateRoomForm, UpdateBookingForm, UpdateContactForm, UpdateReviewForm, CreateStaffForm, UpdateStaffForm, UpdateRestaurantForm
+import pytesseract, datetime, hashlib, shelve, os, OrderLog, GraphPoints, User, Order, Promo, SwabLog, Chat, Room, ChatLog, TempLog, Booking, BookingLog, Contact, Review, Restaurant, OpeningHours, Dish, Staff
 from werkzeug.utils import secure_filename
 from authy.api import AuthyApiClient
-import pytesseract
 from PIL import Image
 from re import search
 from ast import literal_eval
-
+from datetime import date
 
 #graphing
 import io
@@ -1738,7 +1737,120 @@ def restaurant(name):
     restaurants_dict = db['Restaurants']
     db.close()
     restaurant = restaurants_dict[name]
-    return render_template('restaurant.html',restaurant=restaurant,restaurant_list=loadrestaurants())
+    return render_template('restaurant.html',promo_list=loadpromo(),restaurant=restaurant,restaurant_list=loadrestaurants())
+
+@app.route('/restaurants/<name>/order',methods=['GET','POST'])
+def order(name):
+    order_dish_form = OrderDishForm(request.form)
+    if request.method == "POST":
+        db = shelve.open('storage.db', 'c')
+        restaurants_dict = db['Restaurants']
+        restaurant = restaurants_dict[name]
+        order_list = restaurant.get_order_list()
+        order = Order.Order(order_dish_form.name.data,name,order_dish_form.roomno.data)
+        order_list[order.get_order_id()] = order
+        restaurant.set_order_list(order_list)
+        restaurants_dict[name] = restaurant
+        db['Restaurants'] = restaurants_dict
+        return redirect(url_for('restaurant',name=name))
+    else:
+        db = shelve.open('storage.db', 'r')
+        restaurants_dict = db['Restaurants']
+        restaurant = restaurants_dict[name]
+        dish_list = []
+        for dish in restaurant.get_menu():
+            dish_list.append(restaurant.get_menu()[dish].get_name())
+        order_dish_form.name.choices = dish_list
+        db.close()
+        return render_template('order.html',promo_list=loadpromo(),restaurant=restaurant,restaurant_list=loadrestaurants(),form=order_dish_form)
+
+@app.route('/a-restaurants/<name>/a-deleteOrder/<int:id>', methods=['POST'])
+def delete_order(name,id):
+
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        restaurant_dict = db['Restaurants']
+        restaurant = restaurant_dict[name]
+        order_list = restaurant.get_order_list()
+        order_list.pop(id)
+        restaurant.set_order_list(order_list)
+        restaurant_dict[name] = restaurant
+        db['Restaurants'] = restaurant_dict
+        db.close()
+
+        return redirect(url_for('retrieve_restaurant'))
+    else:
+        return "Unauthorized"
+
+@app.route('/a-restaurants/<name>/a-completeOrder/<int:id>', methods=['POST'])
+def complete_order(name,id):
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        restaurant_dict = db['Restaurants']
+        restaurant = restaurant_dict[name]
+        order_list = restaurant.get_order_list()
+        complete_order_list = restaurant.get_complete_order_list()
+        order = order_list[id]
+        orderlog = OrderLog.OrderLog(order.get_dish(),order.get_restaurant(),order.get_roomno())
+        order_list.pop(id)
+        complete_order_list[orderlog.get_order_id()] = orderlog
+        restaurant.set_order_list(order_list)
+        restaurant.set_complete_order_list(complete_order_list)
+        restaurant_dict[name] = restaurant
+        db['Restaurants'] = restaurant_dict
+        db.close()
+
+        return redirect(url_for('retrieve_restaurant'))
+    else:
+        return "Unauthorized"
+
+@app.route('/a-restaurants/<name>/a-deleteOrderLog/<int:id>', methods=['POST'])
+def delete_orderlog(name,id):
+
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['Users']
+    db.close()
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+    if users_dict[userid].get_membership() == "A" and session["auth"] == True:
+        db = shelve.open('storage.db', 'w')
+        restaurant_dict = db['Restaurants']
+        restaurant = restaurant_dict[name]
+        complete_order_list = restaurant.get_complete_order_list()
+        complete_order_list.pop(id)
+        restaurant.set_complete_order_list(complete_order_list)
+        restaurant_dict[name] = restaurant
+        db['Restaurants'] = restaurant_dict
+        db.close()
+
+        return redirect(url_for('retrieve_restaurant'))
+    else:
+        return "Unauthorized"
 
 def loadrestaurants():
     db = shelve.open('storage.db', 'r')
@@ -1785,7 +1897,17 @@ def retrieve_restaurant(name="None"):
         for key in restaurant.get_staff_list():
             staff = restaurant.get_staff_list().get(key)
             staff_list.append(staff)
-        return render_template('a-restaurants.html', restaurant=restaurant, count=len(restaurants_list), restaurants_list=restaurants_list, staff_list=staff_list)
+
+        order_list = []
+        for key in restaurant.get_order_list():
+            order = restaurant.get_order_list().get(key)
+            order_list.append(order)
+
+        orderlog_list = []
+        for key in restaurant.get_complete_order_list():
+            orderlog = restaurant.get_complete_order_list().get(key)
+            orderlog_list.append(orderlog)
+        return render_template('a-restaurants.html', restaurant=restaurant, count=len(restaurants_list), restaurants_list=restaurants_list, staff_list=staff_list,order_list=order_list,orderlog_list=orderlog_list)
     else:
         return "Unauthorized"
 
@@ -2298,6 +2420,10 @@ def success():
     newbooking = Booking.Booking(userid,room_type,session["login"], datetime.datetime.strptime(startdate, '%d/%m/%y'), datetime.datetime.strptime(enddate,'%d/%m/%y'))
     booking_dict[newbooking.get_booking_id()] = newbooking
     db['Bookings'] = booking_dict
+
+    bookinggraph = db['BookingGraph']
+    bookinggraph.increment_point()
+    db['BookingGraph'] = bookinggraph
     db.close()
     return redirect(url_for('home', booked=True))
 
@@ -2317,18 +2443,32 @@ def ordergraph_png():
 
 
 def create_booking_figure():
+    db = shelve.open('storage.db', 'r')
+    graphobj = db['BookingGraph']
     fig = Figure()
     axis = fig.add_subplot(1, 1, 1)
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
+    axis.set_ylabel("Bookings")
+    axis.set_xlabel("Time (d/m/y)")
+    prixs = graphobj.get_xpoints()
+    xs = []
+    for i in prixs:
+        xs.append(i.strftime("%d/%m/%Y"))
+    ys = graphobj.get_ypoints()
     axis.plot(xs, ys)
     return fig
 
 def create_order_figure():
+    db = shelve.open('storage.db', 'r')
+    graphobj = db['OrderGraph']
     fig = Figure()
     axis = fig.add_subplot(1, 1, 1)
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
+    axis.set_ylabel("Orders")
+    axis.set_xlabel("Time (d/m/y)")
+    prixs = graphobj.get_xpoints()
+    xs = []
+    for i in prixs:
+        xs.append(i.strftime("%d/%m/%Y"))
+    ys = graphobj.get_ypoints()
     axis.plot(xs, ys)
     return fig
 
@@ -2471,5 +2611,10 @@ if __name__ == '__main__':
 
     db['Restaurants'] = {"Atlas":restaurant1,"Arch":restaurant2}
     db['Staff'] = {staff1.get_staff_id():staff1,staff2.get_staff_id():staff2}
+
+    bookinggraph = GraphPoints.GraphPoints('BookingGraph',"Time","Bookings")
+    bookinggraph.set_ypoints([0,1,3,0,1])
+    bookinggraph.set_xpoints([date(2021, 1, 13), date(2021, 1, 14), date(2021, 1, 15), date(2021, 1, 16), date(2021, 1, 17)])
+    db['BookingGraph'] = bookinggraph
     db.close()
     app.run()

@@ -8,6 +8,8 @@ class Restaurant:
         self.__lunch_menu = lunch_menu
         self.__dinner_menu = dinner_menu
         self.__staff_list = staff_list
+        self.__order_list = {}
+        self.__complete_order_list = {}
 
     def get_name(self):
         return self.__name
@@ -33,6 +35,12 @@ class Restaurant:
     def get_staff_list(self):
         return self.__staff_list
 
+    def get_order_list(self):
+        return self.__order_list
+
+    def get_complete_order_list(self):
+        return self.__complete_order_list
+
     def set_name(self,name):
         self.__name = name
 
@@ -56,3 +64,9 @@ class Restaurant:
 
     def set_staff_list(self,staff_list):
         self.__staff_list = staff_list
+
+    def set_order_list(self,order_list):
+        self.__order_list = order_list
+
+    def set_complete_order_list(self,complete_order_list):
+        self.__complete_order_list = complete_order_list
