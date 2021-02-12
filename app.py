@@ -2246,6 +2246,34 @@ def confirmdetails():
 def approve():
     return redirect(url_for('success'))
 
+@app.route('/cancel', methods=['POST'])
+def cancel():
+    db = shelve.open('storage.db', 'c')
+    users_dict = db['Users']
+
+    for i in users_dict:
+        try:
+            if users_dict[i].get_username() == session["login"]:
+                userid = users_dict[i].get_user_id()
+        except:
+            return "Not logged in"
+
+    room_type = request.json["room"]
+    session['room_memory'] = room_type
+    if "Studio" in room_type:
+        session['room-url'] = "studio-rooms"
+    elif "Regular" in room_type:
+        session['room-url'] = "regular-rooms"
+    elif "Suite" in room_type:
+        session['room-url'] = "suites"
+
+    print(session['room_memory'])
+    return redirect(url_for('failed'))
+
+@app.route('/failed', methods=['GET'])
+def failed():
+    return "Transaction failed"
+
 @app.route('/success', methods=['GET'])
 def success():
     db = shelve.open('storage.db', 'c')
@@ -2273,13 +2301,6 @@ def success():
     db.close()
     return redirect(url_for('home', booked=True))
 
-@app.route('/plot.png')
-def plot_png():
-    fig = create_figure()
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    return Response(output.getvalue(), mimetype='image/png')
-
 @app.route('/bookinggraph.png')
 def bookinggraph_png():
     fig = create_booking_figure()
@@ -2294,13 +2315,6 @@ def ordergraph_png():
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
-def create_figure():
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
-    axis.plot(xs, ys)
-    return fig
 
 def create_booking_figure():
     fig = Figure()

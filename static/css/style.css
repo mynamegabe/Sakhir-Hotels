@@ -1635,3 +1635,12 @@ height:130vh !important;
   transform:translateY(-50%);
   text-align:center;
 }
+
+#reminder {
+  background-color:white;
+  border-radius:10px;
+  position:fixed;
+  right:10px;
+  top:100px;
+  padding:0px 20px;
+}

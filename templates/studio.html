@@ -98,7 +98,7 @@
               } else {
                 quantity = 1;
               }
-
+              console.log("lol")
               tax *= quantity;
               tax = Math.round(tax * 100) / 100;
               var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
@@ -150,7 +150,7 @@
               });
             },
             onError: function(err) {
-              console.log(err);
+              console.log('Failed')
             },
           }).render('#paypal-button-container-{{ room.get_room_id() }}');
         }
@@ -213,6 +213,12 @@
 
           },
           createOrder: function(data, actions) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/cancel", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                room : "{{room.get_room_name()}}"
+            }));
             var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
             var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
             var tax = (0 === 0) ? 0 : (selectedItemPrice * (parseFloat(0)/100));
