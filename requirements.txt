@@ -16,3 +16,4 @@ twilio==6.52.0
 urllib3==1.26.3
 Werkzeug==1.0.1
 WTForms==2.3.3
+gunicorn
