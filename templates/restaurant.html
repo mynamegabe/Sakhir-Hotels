@@ -45,6 +45,7 @@
           <h4>{{ restaurant.get_menu()[dish].get_name() }} <span>{{ restaurant.get_menu()[dish].get_description() }} ${{ restaurant.get_menu()[dish].get_price() }}</span></h4>
           <br>
         {% endfor %}
+        <a href="/restaurants/{{ restaurant.get_name() }}/order" id="roomservicebutton">Room Service</a>
       </div>
       <br>
       <div id="openinghours">
