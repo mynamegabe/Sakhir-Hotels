@@ -170,7 +170,7 @@ def update_room(id):
             room.set_avail_rooms(update_room_form.avail_rooms.data)
             room.set_price(update_room_form.price.data)
             room.set_capacity_list(update_room_form.capacity.data)
-            room.set_details_list(update_room_form.details.data)
+            room.set_detail_list(update_room_form.details.data)
 
             db['Rooms'] = room_dict
             db.close()

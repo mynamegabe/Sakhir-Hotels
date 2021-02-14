@@ -9,6 +9,11 @@ class Room:
         self.__avail_rooms = avail_rooms
         self.__price = price
         self.__capacity_list = capacitylist
+        if type(detaillist) == "str":
+            detaillist = detaillist.replace('[', '')
+            detaillist = detaillist.replace(']', '')
+            detaillist = detaillist.replace('"', '')
+            detaillist = detaillist.split(',')
         self.__detail_list = detaillist
 
     def get_room_id(self):
@@ -51,6 +56,11 @@ class Room:
         self.__capacity_list = capacitylist
 
     def set_detail_list(self, detaillist):
-        self.__detail_list = detaillist
+        detaillist = detaillist.replace('[', '')
+        detaillist = detaillist.replace(']', '')
+        detaillist = detaillist.replace('"', '')
+
+        text = detaillist.split(',')
+        self.__detail_list = text
 
 
