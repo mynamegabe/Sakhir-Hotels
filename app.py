@@ -2302,10 +2302,9 @@ def homepage():
         rooms_dict = db['Rooms']
         roomlist = []
         for key in rooms_dict:
-            for key2 in rooms_dict[key]:
-                room = rooms_dict[key][key2]
-                if formatted_capacity in room.get_capacity_list():
-                    roomlist.append(room)
+            room = rooms_dict[key]
+            if formatted_capacity in room.get_capacity_list():
+                roomlist.append(room)
         return {"form": details_form, "chat": None, "support": False, 'search': search_form, 'roomlist': roomlist}
     if request.method == 'POST' and details_form.validate():
         db = shelve.open('storage.db', 'c')
