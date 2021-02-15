@@ -10,7 +10,7 @@
 'BookingLogs', (25088, 319)
 'Contacts', (25600, 230)
 'Reviews', (28672, 464)
-'Restaurants', (48640, 1606)
+'Restaurants', (66560, 1606)
 'Staff', (32768, 347)
 'BookingGraph', (48128, 334)
 'OrderGraph', (51200, 330)

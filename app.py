@@ -613,7 +613,7 @@ def retrieve_users():
             db = shelve.open('storage.db', 'w')
             users_dict = db['Users']
 
-            usersearch = search_user_form.username.data
+            usersearch = search_user_form.username.data.replace(" ","")
             if usersearch.isnumeric():
                 try:
                     users_list = [users_dict[int(usersearch)]]
@@ -621,13 +621,11 @@ def retrieve_users():
                     users_list = "None"
             elif usersearch.isalnum():
                 for i in users_dict:
-                    if usersearch.lower() in users_dict[i].get_username().lower():
+                    if usersearch.lower() in users_dict[i].get_username().lower() or usersearch.lower() == users_dict[i].get_username().lower():
                         userid = users_dict[i].get_user_id()
                         users_list = [users_dict[userid]]
-                    else:
-                        users_list ="None"
-            else:
-                users_list = "Invalid"
+                if len(users_list) == 0:
+                    users_list = "None"
         return render_template('users.html', count=count, users_list=users_list, form=search_user_form)
     else:
         return "Unauthorized"
