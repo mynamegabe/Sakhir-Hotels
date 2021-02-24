@@ -415,10 +415,7 @@ def profile():
     user1 = users_dict[userid]
 
     booking_list = []
-    print(userid)
-    print(user1.get_bookings())
     for booking in user1.get_bookings():
-        print(booking)
         booking_list.append(bookings_dict[booking])
     return render_template('profile.html',user=user1, booking_list=booking_list)
 
