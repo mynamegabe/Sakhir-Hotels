@@ -91,3 +91,4 @@ class User:
 
     def add_booking(self,bookingid):
         self.__bookings.append(bookingid)
+        print(self.__bookings)

@@ -1,1 +1,1 @@
-12/02/21,17/02/21,5,<bound method Room.get_room_name of <Room.Room object at 0x0000017EBFF9D5E0>>
+15/02/21,17/02/21,None,Studio Mini

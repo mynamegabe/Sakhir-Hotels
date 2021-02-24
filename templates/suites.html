@@ -47,14 +47,17 @@
             {% endfor %}
           </ul>
           <br><br>
-          <fieldset style="text-align:left;" class="fullfields">
-            <legend>Start Date</legend>
-            <input type="date" id="startdate" class="fieldsetfields"/>
-          </fieldset>
-          <fieldset style="text-align:left;" class="fullfields">
-            <legend>End Date</legend>
-            <input type="date" id="enddate" class="fieldsetfields"/>
-          </fieldset>
+          <form action="/confirmdetails" method="post">
+              <fieldset style="text-align:left;" class="fullfields">
+                <legend>Start Date</legend>
+                <input type="date" id="startdate" name="startdate" class="fieldsetfields"/>
+              </fieldset>
+              <fieldset style="text-align:left;" class="fullfields">
+                <legend>End Date</legend>
+                <input type="date" id="enddate" name="enddate" class="fieldsetfields" onchange="this.form.submit()"/>
+              </fieldset>
+              <input type="hidden" name="room_type" value="{{ room.get_room_name() }}"></input>
+            </form>
           <br><br>
           <div id="smart-button-container-{{ room.get_room_id() }}">
             <div style="text-align: center;">
@@ -166,14 +169,17 @@
           {% endfor %}
         </ul>
         <br><br>
-        <fieldset style="text-align:left;" class="fullfields">
-          <legend>Start Date</legend>
-          <input type="date" id="startdate" class="fieldsetfields"/>
-        </fieldset>
-        <fieldset style="text-align:left;" class="fullfields">
-          <legend>End Date</legend>
-          <input type="date" id="enddate" class="fieldsetfields"/>
-        </fieldset>
+        <form action="/confirmdetails" method="post">
+            <fieldset style="text-align:left;" class="fullfields">
+              <legend>Start Date</legend>
+              <input type="date" id="startdate" name="startdate" class="fieldsetfields"/>
+            </fieldset>
+            <fieldset style="text-align:left;" class="fullfields">
+              <legend>End Date</legend>
+              <input type="date" id="enddate" name="enddate" class="fieldsetfields" onchange="this.form.submit()"/>
+            </fieldset>
+            <input type="hidden" name="room_type" value="{{ room.get_room_name() }}"></input>
+          </form>
         <br><br>
         <div id="smart-button-container">
           <div style="text-align: center;">

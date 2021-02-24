@@ -415,7 +415,10 @@ def profile():
     user1 = users_dict[userid]
 
     booking_list = []
-    for booking in user.get_bookings():
+    print(userid)
+    print(user1.get_bookings())
+    for booking in user1.get_bookings():
+        print(booking)
         booking_list.append(bookings_dict[booking])
     return render_template('profile.html',user=user1, booking_list=booking_list)
 
@@ -1035,6 +1038,7 @@ def delete_chat(id):
         chatlogs_dict = db['ChatLogs']
         chat_log = ChatLog.ChatLog(chat.get_name(), chat.get_email(), chat.get_phone(),chat.get_query())
         chat_log.set_status("Complete")
+        chat_log.set_chat(chat.get_chat())
         chatlogs_dict[chat_log.get_chatlog_id()] = chat_log
         db['ChatLogs'] = chatlogs_dict
         db.close()
@@ -1931,11 +1935,12 @@ def update_restaurant(name):
             restaurant_dict = db['Restaurants']
 
             restaurant = restaurant_dict.get(name)
+            restaurant_dict.pop(name)
             restaurant.set_name(update_restaurant_form.name.data)
             restaurant.set_cuisine(update_restaurant_form.cuisine.data)
             restaurant.set_description(update_restaurant_form.description.data)
             restaurant.set_opening_hours(literal_eval(update_restaurant_form.opening_hours.data))
-
+            restaurant_dict[restaurant.get_name()] = restaurant
             db['Restaurants'] = restaurant_dict
             db.close()
 
@@ -2357,12 +2362,13 @@ def confirmdetails():
         data = request.form
         startdate = datetime.datetime.strptime(data['startdate'], '%Y-%m-%d').strftime('%d/%m/%y')
         enddate = datetime.datetime.strptime(data['enddate'], '%Y-%m-%d').strftime('%d/%m/%y')
-        days = str(datetime.datetime.strptime(enddate,'%d/%m/%y') - datetime.datetime.strptime(startdate,'%d/%m/%y'))
-        days = days[0:days.index("days")-1]
+        #days = str(datetime.datetime.strptime(enddate,'%d/%m/%y') - datetime.datetime.strptime(startdate,'%d/%m/%y'))
+        #days = days[0:days.index("days")-1]
+        days = "None"
         room_type = data['room_type']
         b.write(str(startdate)+","+str(enddate)+","+days+','+room_type)
         b.close()
-    return "cool"
+    return "Set"
 
 @app.route('/approve', methods=['POST'])
 def approve():
@@ -2417,8 +2423,11 @@ def success():
         days = data[2]
         room_type = data[3]
 
-    newbooking = Booking.Booking(userid,room_type,session["login"], datetime.datetime.strptime(startdate, '%d/%m/%y'), datetime.datetime.strptime(enddate,'%d/%m/%y'))
+    user1 = users_dict[userid]
+    newbooking = Booking.Booking(userid,session["login"], room_type,datetime.datetime.strptime(startdate, '%d/%m/%y'), datetime.datetime.strptime(enddate,'%d/%m/%y'))
     booking_dict[newbooking.get_booking_id()] = newbooking
+    users_dict[userid].add_booking(newbooking.get_booking_id())
+    db['Users'] = users_dict
     db['Bookings'] = booking_dict
 
     bookinggraph = db['BookingGraph']

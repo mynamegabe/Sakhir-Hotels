@@ -56,7 +56,7 @@
               <legend>End Date</legend>
               <input type="date" id="enddate" name="enddate" class="fieldsetfields" onchange="this.form.submit()"/>
             </fieldset>
-            <input type="hidden" name="room_type" value="{{ room.get_room_name }}"></input>
+            <input type="hidden" name="room_type" value="{{ room.get_room_name() }}"></input>
           </form>
           <br><br>
           <div id="smart-button-container-{{ room.get_room_id() }}">
@@ -178,7 +178,7 @@
               <legend>End Date</legend>
               <input type="date" id="enddate" name="enddate" class="fieldsetfields" onchange="this.form.submit()"/>
             </fieldset>
-            <input type="hidden" name="room_type" value="{{ room.get_room_name }}"></input>
+            <input type="hidden" name="room_type" value="{{ room.get_room_name() }}"></input>
           </form>
         <br><br>
         <div id="smart-button-container">
