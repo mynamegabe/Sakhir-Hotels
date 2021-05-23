@@ -2482,7 +2482,7 @@ def create_order_figure():
 
 if __name__ == '__main__':
     db = shelve.open('storage.db', 'c')
-
+    db['Users'] = {}
     try:
         users_dict = db['Users']
     except:
