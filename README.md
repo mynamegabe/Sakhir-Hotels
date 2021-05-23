@@ -5,7 +5,7 @@
 __Features__
 1. Dynamic Content
 2. OTP Login Verification
-3. Admin Panel
+3. Admin Panel with graphs
 4. Swab Test Image Recognition with Tesseract
 5. Live Chat/Support
 
