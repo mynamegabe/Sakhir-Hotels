@@ -2,6 +2,10 @@
 ### Hotel website
 #### Uses the Flask Micro Framework
 
+Admin Login
+> Admin1
+> hello
+
 __Features__
 1. Dynamic Content
 2. OTP Login Verification
