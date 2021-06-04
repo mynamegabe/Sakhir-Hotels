@@ -1207,7 +1207,9 @@ def login():
 
         for userid in users_dict:
             user = users_dict[userid]
+            print(user.get_username(), create_login_form.username.data)
             if user.get_username() == create_login_form.username.data:
+                print(user.get_password(), sha256(create_login_form.pw.data+"shho"))
                 if user.get_password() == sha256(create_login_form.pw.data+"shho"):
                     session["login"] = user.get_username()
                     if user.get_membership() == "A":
