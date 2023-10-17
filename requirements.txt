@@ -19,3 +19,5 @@ WTForms==2.3.3
 gunicorn
 authy
 matplotlib
+numpy>=1.21.0rc1 # not directly required, pinned by Snyk to avoid a vulnerability
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
